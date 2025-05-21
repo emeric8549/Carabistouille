@@ -1,6 +1,7 @@
 import numpy as np
 
 def BCE_loss(y, y_pred):
+    y_pred = np.clip(y_pred, 1e-9, 1 - 1e-9)
     loss = - (y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
     return np.mean(loss)
 

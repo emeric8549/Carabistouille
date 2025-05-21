@@ -9,7 +9,7 @@ class MLP:
         dims = [input_dim] + hidden_dims + [output_dim]
 
         for i in range(len(dims) - 1):
-            weight = np.random.randn(dims[i], dims[i+1])
+            weight = np.random.randn(dims[i], dims[i+1]) * np.sqrt(2. / dims[i])
             bias = np.zeros((1, dims[i+1]))
             self.layers.append(weight)
             self.biases.append(bias)
@@ -19,6 +19,7 @@ class MLP:
         return np.maximum(0, x)
 
     def deriv_relu(self, x):
+        x = np.nan_to_num(x)
         return (x > 0).astype(float)
 
 
@@ -43,7 +44,6 @@ class MLP:
 
         z = a @ self.layers[-1] + self.biases[-1]
         self.z_values.append(z)
-        #self.activations.append(z)
 
         return z
 
