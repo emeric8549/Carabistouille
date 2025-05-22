@@ -1,6 +1,7 @@
 joblib==1.5.0
--e git+ssh://git@github.com/emeric8549/Carabistouille.git@5bb959ee21caaec8b62dd16af5876eade34b9ced#egg=mlp_numpy&subdirectory=projects/mlp-numpy
+-e git+ssh://git@github.com/emeric8549/Carabistouille.git@3f301b3c587ec07da364f12a781634dbda498594#egg=mlp_numpy&subdirectory=projects/mlp-numpy
 numpy==2.2.6
+PyYAML==6.0.2
 scikit-learn==1.6.1
 scipy==1.15.3
 threadpoolctl==3.6.0

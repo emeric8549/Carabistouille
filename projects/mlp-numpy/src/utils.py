@@ -22,3 +22,15 @@ def get_data(n_samples=1000, n_features=5, n_redundant=0, n_informative=5, n_clu
 
 
     return X, np.eye(n_classes)[y]
+
+
+def split_data(X, y, test_size):
+    indices = np.arange(len(X))
+    test_limit = int(len(X) * test_size)
+    train_indices = indices[test_limit:]
+    test_indices = indices[:test_limit]
+
+    X_train, X_test = X[train_indices], X[test_indices]
+    y_train, y_test = y[train_indices], y[test_indices]
+
+    return X_train, y_train, X_test, y_test
