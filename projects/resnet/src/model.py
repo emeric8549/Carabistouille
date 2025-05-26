@@ -1,13 +1,5 @@
-import numpy as np
-from tqdm import tqdm
-
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
-from torch.optim import SGD
-
-from torchvision.datasets import CIFAR10
-from torchvision import transforms
 
 class ResNetBlock(nn.Module):
     def __init__(self, input_channels, output_channels, stride):
@@ -22,15 +14,17 @@ class ResNetBlock(nn.Module):
         self.shortcut = nn.Sequential()
         if stride != 1 or input_channels!=output_channels:
             self.shortcut = nn.Sequential(
-                nn.Conv2d(in_channels=input_channels, out_channels=output_channels, kernel_size=1, stride=2, bias=False),
+                nn.Conv2d(in_channels=input_channels, out_channels=output_channels, kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(output_channels)
             )
 
     def forward(self, x):
         out = self.relu(self.bn1(self.conv1(x)))
-        out = self.bn2(self.conv2(x))
-        out += self.relu(out)
+        out = self.bn2(self.conv2(out))
+        out += self.shortcut(x) 
+        out = self.relu(out)
 
+        return out
 
 class ResNet34(nn.Module):
     def __init__(self, input_channels, output_channels):
