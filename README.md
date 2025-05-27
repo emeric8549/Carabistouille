@@ -1,16 +1,16 @@
 # Carabistouille
 
-Welcome in **Carabistouille**!
+Welcome to **Carabistouille**!
 
 ## **Projects fully finished:**
     Work in progress
 
 ## **Ongoing projects:**
     - mlp-numpy (code implemented, still need visualizations + README)
-    - resnet (just started)
+    - resnet (code implemented, have to train the model on at least 100 epochs and compare performance with a simple CNN)
+    - unet (just started)
 
 ## **Future projects:**
-    - unet
     - auto-encoder
     - transformer
     - word2vec
