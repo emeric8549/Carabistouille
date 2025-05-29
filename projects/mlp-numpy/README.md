@@ -5,3 +5,4 @@ To test this implementation, we can choose from three different datasets in the 
   
 ### Work to do:
     - Penser à faire pip install -e . pour installer le dossier comme une librairie en faisant tourner le fichier setup.py
+    - Add explaination for math / derivation 
