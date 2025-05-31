@@ -8,3 +8,4 @@ I have chosen to implement ResNet-34, a model with more than 2 millions paramete
  ### Work to do:
     - compare performance with a simple CNN
     - add image of the network
+    - create utils function to extract data and return dataloaders (useful for train and tests files)
