@@ -1,0 +1,137 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import colors
+from matplotlib.colors import ListedColormap, BoundaryNorm
+import time 
+
+class MinesweeperEnv:
+    def __init__(self, height=10, width=10, num_mines=10):
+        self.height = height
+        self.width = width
+        self.num_mines = num_mines
+        self.n_actions = height * width
+        self.history = []
+
+        self.reset()
+        self._setup_rendering()
+
+    def reset(self):
+        """
+        Initialize the game
+        self.grid is the solution of the current minesweeper. A -1 indicates a mine while number between 0 and 8 indicates the number of mines in the neighborhood
+        self.visible is the grid visible by the player/agent. A -1 indicates that it is still hidden while -2 indicates that a mine has been triggered
+        """
+        self.grid = np.zeros((self.height, self.width), dtype=int)
+        self.visible = -np.ones((self.height, self.width), dtype=int)
+        self.game_over = False
+        self._place_mines()
+        self._calculate_numbers()
+        self.history = [(self.visible.copy(), None)]
+
+        return self._get_observation()
+    
+    def step(self, action):
+        x, y = divmod(action, self.width)
+
+        if self.game_over:
+            return self._get_observation(), -1.0, True, {"invalid": True}
+        
+        if self.visible[x, y] != -1:
+            return self._get_observation(), -0.1, False, {"invalid": True}
+        
+        if self.grid[x, y] == -1:
+            self.game_over = True
+            self.visible[x, y] = -2
+            self.history.append((self.visible.copy(), (x, y)))
+            return self._get_observation(), -10.0, True, {}
+        
+        self._reveal_recursive(x, y)
+        done = self._check_win()
+        reward = 1.0 if done else 0.1
+        self.history.append((self.visible.copy(), (x, y)))
+
+        return self._get_observation(), reward, done, {}
+    
+    def _get_observation(self):
+        return self.visible.copy()
+    
+    def _place_mines(self):
+        mines = np.random.choice(self.height * self.width, self.num_mines, replace=False)
+        for mine in mines:
+            x, y = divmod(mine, self.width)
+            self.grid[x, y] = -1
+
+    def _calculate_numbers(self):
+        for x in range(self.height):
+            for y in range(self.width):
+                if self.grid[x, y] == -1:
+                    continue
+                count = sum(
+                    self.grid[nx, ny] == -1
+                    for nx in range(max(0, x-1), min(self.height, x+2))
+                    for ny in range(max(0, y-1), min(self.width, y+2))
+                )
+                self.grid[x, y] = count
+
+    def _reveal_recursive(self, x, y):
+        if not(0 <= x < self.height and 0 <= y < self.width):
+            return 
+        if self.visible[x, y] != -1:
+            return
+        self.visible[x, y] = self.grid[x, y]
+        if self.grid[x, y] == 0:
+            for dx in [-1, 0, 1]:
+                for dy in [-1, 0, 1]:
+                    if dx != 0 or dy != 0:
+                        self._reveal_recursive(x + dx, y + dy)
+
+    def _check_win(self):
+        return np.all((self.visible != -1) | (self.grid == -1))
+    
+    def save_history(self):
+        return self.history
+
+    def _setup_rendering(self):
+        plt.ion()
+        self.fig, self.ax = plt.subplots()
+        
+        colors = ["red", "gray", "lightblue", "blue", "green", "orange", "purple", "brown", "pink", "black", "maroon"]
+        cmap = ListedColormap(colors)
+        bounds = list(range(-2, 10))
+        norm = BoundaryNorm(bounds, ncolors=len(colors))
+
+        self.img = self.ax.imshow(self.visible, cmap=cmap, norm=norm)
+        plt.xticks([])
+        plt.yticks([])
+        self.texts = [[None for _ in range(self.width)] for _ in range(self.height)]
+
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        plt.pause(0.5)
+
+    def render(self):
+        self.img.set_data(self.visible)
+
+        # Supprimer anciens textes
+        for row in self.texts:
+            for text in row:
+                if text:
+                    text.remove()
+
+        # Afficher les chiffres pour les cases révélées
+        for i in range(self.height):
+            for j in range(self.width):
+                val = self.visible[i, j]
+                if val >= 0:  # 0 à 8
+                    color = "black" if val != 0 else "gray"
+                    self.texts[i][j] = self.ax.text(j, i, str(val),
+                                                    ha="center", va="center",
+                                                    color=color, fontsize=12, fontweight='bold')
+
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        plt.pause(0.5)
+
+    def close(self):
+        plt.ioff()
+        plt.close(self.fig)
