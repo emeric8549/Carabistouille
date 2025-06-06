@@ -12,22 +12,24 @@ Below are the projects I have done so far and those that I plan to do (this is a
     Work in progress
 
 ## **Ongoing projects:**
-    - mlp-numpy (code implemented, still need visualizations + README)
+    - mlp-numpy (code implemented, still need visualizations)
     - resnet (code implemented, have to train the model on at least 100 epochs and compare performance with a simple CNN)
-    - unet (just started)
+    - unet (architecture done, still need a pipeline for training)
+    - word2vec (just started)
+    - reinforcement learning I: minesweeper-rl (environment created + started episode creation and monitoring with tensorboard)
+
 
 ## **Future projects:**
     - auto-encoder
     - transformer
-    - word2vec
     - use case on NLP (maybe do that in transformer)
     - use case on time series (with a music dataset)
     - hackathon (ViT on plankton images)
     - polytechnique project (scientific papers classification using GNN)
     - IoT project using ML on a Raspberry pi (would be lovely)
-    - reinforcement learning I: solve a Rubik's cube
-    - reinforcement learning II: create an environment with Unity and ML-agents
+    - reinforcement learning II: solve a Rubik's cube
+    - reinforcement learning III: create an environment with Unity and ML-agents
     - diffusion model
     - neural ordinary differential equations
-    - simple LLM
+    - simple LLM (use vectorDB and Langchain)
     - create agent on a pre-trained LLM
