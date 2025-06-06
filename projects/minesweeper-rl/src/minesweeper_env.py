@@ -5,15 +5,17 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 import time 
 
 class MinesweeperEnv:
-    def __init__(self, height=10, width=10, num_mines=10):
+    def __init__(self, height=10, width=10, num_mines=10, rendering=None):
         self.height = height
         self.width = width
         self.num_mines = num_mines
+        self.rendering = rendering
         self.n_actions = height * width
         self.history = []
 
         self.reset()
-        self._setup_rendering()
+        if self.rendering == "human":
+            self._setup_rendering()
 
     def reset(self):
         """
@@ -33,24 +35,24 @@ class MinesweeperEnv:
     def step(self, action):
         x, y = divmod(action, self.width)
 
-        if self.game_over:
-            return self._get_observation(), -1.0, True, {"invalid": True}
-        
         if self.visible[x, y] != -1:
-            return self._get_observation(), -0.1, False, {"invalid": True}
+            return self._get_observation(), -0.1, self.game_over, {"invalid": True}
         
-        if self.grid[x, y] == -1:
+        elif self.grid[x, y] == -1:
             self.game_over = True
             self.visible[x, y] = -2
             self.history.append((self.visible.copy(), (x, y)))
             return self._get_observation(), -10.0, True, {}
         
-        self._reveal_recursive(x, y)
-        done = self._check_win()
-        reward = 1.0 if done else 0.1
-        self.history.append((self.visible.copy(), (x, y)))
+        else:
+            self._reveal_recursive(x, y)
+            if not self.game_over:
+                self.game_over = self._check_win()
 
-        return self._get_observation(), reward, done, {}
+            reward = 10.0 if self.game_over else 0.1
+            self.history.append((self.visible.copy(), (x, y)))
+
+            return self._get_observation(), reward, self.game_over, {}
     
     def _get_observation(self):
         return self.visible.copy()
@@ -110,28 +112,30 @@ class MinesweeperEnv:
         plt.pause(0.5)
 
     def render(self):
-        self.img.set_data(self.visible)
+        if self.rendering == "human":
+            self.img.set_data(self.visible)
 
-        # Supprimer anciens textes
-        for row in self.texts:
-            for text in row:
-                if text:
-                    text.remove()
+            # Supprimer anciens textes
+            for row in self.texts:
+                for text in row:
+                    if text:
+                        text.remove()
 
-        # Afficher les chiffres pour les cases révélées
-        for i in range(self.height):
-            for j in range(self.width):
-                val = self.visible[i, j]
-                if val >= 0:  # 0 à 8
-                    color = "black" if val != 0 else "gray"
-                    self.texts[i][j] = self.ax.text(j, i, str(val),
-                                                    ha="center", va="center",
-                                                    color=color, fontsize=12, fontweight='bold')
+            # Afficher les chiffres pour les cases révélées
+            for i in range(self.height):
+                for j in range(self.width):
+                    val = self.visible[i, j]
+                    if val >= 0:  # 0 à 8
+                        color = "black" if val != 0 else "gray"
+                        self.texts[i][j] = self.ax.text(j, i, str(val),
+                                                        ha="center", va="center",
+                                                        color=color, fontsize=12, fontweight='bold')
 
-        self.fig.canvas.draw()
-        self.fig.canvas.flush_events()
-        plt.pause(0.5)
+            self.fig.canvas.draw()
+            self.fig.canvas.flush_events()
+            plt.pause(0.5)
 
     def close(self):
-        plt.ioff()
-        plt.close(self.fig)
+        if self.rendering == "human":
+            plt.ioff()
+            plt.close(self.fig)
