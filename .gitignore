@@ -2,6 +2,9 @@
 data/
 dataset/
 
+# RL Runs
+runs/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
