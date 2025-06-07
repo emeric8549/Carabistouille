@@ -8,3 +8,4 @@ Each time the user launches the train function, a log of the run is created. It 
     - create different agents (Q-learning, DQN, ...)
     - correct rendering when n_episodes > 1 (for now, user should put rendering at human only with 1 episode)
     - change the train function to use it with any agent (currently random actions)
+    - use buffer to replay previous episodes to avoid memory loss 
