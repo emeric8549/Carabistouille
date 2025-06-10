@@ -6,34 +6,35 @@ class HeuristicAgent:
         pass
 
 
-    def get_neighbors(x, y, height, width):
+    def get_neighbors(self, x, y, height, width):
         return [(i, j) for i in range(max(0, x-1), min(height, x+2))
                        for j in range(max(0, y-1), min(width, y+2))
                        if (i != x or j != y)]
 
 
-    def find_safe_moves(visible):
+    def flag(self, visible):
             height, width = visible.shape
-            safe_moves = set()
+            flagged = set()
 
             for x in range(height):
                 for y in range(width):
-                    val = visible[x, y]
-                    if val <= 0 or val > 8:
+                    target = visible[x, y]
+                    if target <= 0: # if target cell is hidden or equals 0 (no mine around), then next cell
                         continue
 
                     neighbors = get_neighbors(x, y, height, width)
-                    hidden = [(i, j) for i, j in neighbors if visible[i, j] == -1]
-                    flagged = [(i, j) for i, j in neighbors if visible[i, j] == -2]
 
-                    if val == len(flagged): # every hidden cells are ok
-                        safe_moves.update(hidden)
+                    hidden = [i * width + j for i, j in neighbors if visible[i, j] == -1]
 
-        return list(safe_moves)
+                    if target == len(hidden): # number of hidden cells = number of mines around target cell
+                        flagged.update(hidden)
+
+        return list(flagged)
 
 
     def take_action(self, env):
-        actions = self.find_safe_moves(env.visible)
+        flagged = self.flag(env.visible)
+        actions = [i for i in range(env.n_actions) if (i not in flagged and env.visible[divmod(i, env.width)] < 0)]
         if actions:
             action = np.random.choice(actions, size=1)
         else:
