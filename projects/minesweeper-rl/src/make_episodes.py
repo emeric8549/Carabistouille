@@ -1,5 +1,6 @@
 from minesweeper_env import MinesweeperEnv
 from heuristic_agent import HeuristicAgent
+from random_agent import RandomAgent
 import numpy as np
 
 from torch.utils.tensorboard import SummaryWriter
