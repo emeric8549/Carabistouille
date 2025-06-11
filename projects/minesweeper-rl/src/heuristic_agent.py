@@ -1,4 +1,4 @@
-import numpy as numpy
+import numpy as np
 
 
 class HeuristicAgent:
@@ -13,21 +13,21 @@ class HeuristicAgent:
 
 
     def flag(self, visible):
-            height, width = visible.shape
-            flagged = set()
+        height, width = visible.shape
+        flagged = set()
 
-            for x in range(height):
-                for y in range(width):
-                    target = visible[x, y]
-                    if target <= 0: # if target cell is hidden or equals 0 (no mine around), then next cell
-                        continue
+        for x in range(height):
+            for y in range(width):
+                target = visible[x, y]
+                if target <= 0: # if target cell is hidden or equals 0 (no mine around), then next cell
+                    continue
 
-                    neighbors = get_neighbors(x, y, height, width)
+                neighbors = self.get_neighbors(x, y, height, width)
 
-                    hidden = [i * width + j for i, j in neighbors if visible[i, j] == -1]
+                hidden = [i * width + j for i, j in neighbors if visible[i, j] == -1]
 
-                    if target == len(hidden): # number of hidden cells = number of mines around target cell
-                        flagged.update(hidden)
+                if target == len(hidden): # number of hidden cells = number of mines around target cell
+                    flagged.update(hidden)
 
         return list(flagged)
 
