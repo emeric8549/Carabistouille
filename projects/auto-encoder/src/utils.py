@@ -8,13 +8,13 @@ from torch.utils.data import Dataset, DataLoader
 
 
 class BlurredMNIST(Dataset):
-    def __init__(self, train=True, download=True, kernel=5, sigma(1, 20)):
+    def __init__(self, train=True, download=True, kernel=5, sigma=(1, 20)):
         self.base_dataset = torchvision.datasets.MNIST(
             root='./data', train=train, download=download
         )
 
         self.transform_input = transforms.Compose([
-            transform.GaussianBlur(kernel_size=kernel, sigma=sigma),
+            transforms.GaussianBlur(kernel_size=kernel, sigma=sigma),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))
         ])
@@ -46,13 +46,13 @@ def get_data_blurred(batch_size, kernel=5, sigma=(1, 20), shuffle=False, downloa
 
 
 class ColorizedCIFAR10(Dataset):
-    def __init__(self, train=True, download=True, kernel=5, sigma(1, 20)):
+    def __init__(self, train=True, download=True):
         self.base_dataset = torchvision.datasets.CIFAR10(
             root='./data', train=train, download=download
         )
 
         self.transform_input = transforms.Compose([
-            transform.Grayscale(num_output_channels=1),
+            transforms.Grayscale(num_output_channels=1),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))
         ])
@@ -93,7 +93,7 @@ def imcompare(X, pred, real):
     pred_np = torchvision.utils.make_grid(pred, nrow=len(pred)).numpy()
     real_np = torchvision.utils.make_grid(real, nrow=len(real)).numpy()
 
-    fig, axes = plt.subplots(3, 1, figsize(12, 6))
+    fig, axes = plt.subplots(3, 1, figsize=(12, 6))
     axes[0].imshow(np.transpose(X_np, (1, 2, 0)))
     axes[0].set_title("Blurred images")
     axes[0].axis("off")
