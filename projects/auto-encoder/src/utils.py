@@ -21,7 +21,7 @@ class BlurredMNIST(Dataset):
 
         self.transform_target = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalze((0.5,), (0.5,))
+            transforms.Normalize((0.5,), (0.5,))
         ])
 
     def __len__(self):
