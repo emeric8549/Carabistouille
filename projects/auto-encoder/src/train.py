@@ -1,6 +1,8 @@
+from tqdm import tqdm
+import torch
 from torcheval.metrics import PeakSignalNoiseRatio #, StructuralSimilarity
 
-def test(model, dataloader_test):
+def test(model, dataloader_test, device):
     model.eval()
     model.to(device)
     psnr = PeakSignalNoiseRatio()
@@ -24,10 +26,10 @@ def train(model, dataloader_train, dataloader_test, optimizer, criterion, n_epoc
     model.train()
     model.to(device)
     for e in range(n_epochs):
-        print(f"\nEpoch {e+1}:")
-        for x, y in dataloader_train:
+        for x, y in tqdm(dataloader_train, description=f"Iteration {e+1}"):
             x = x[0].to(device)
             y = y[0].to(device)
+            
             optimizer.zero_grad()
             output = model(x)
             loss = criterion(output, y)
@@ -35,4 +37,4 @@ def train(model, dataloader_train, dataloader_test, optimizer, criterion, n_epoc
             optimizer.step()
 
         print(f"Train loss: {loss.item()}")
-        test(model, dataloader_test)
+        test(model, dataloader_test, device)
