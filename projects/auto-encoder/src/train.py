@@ -22,11 +22,11 @@ def test(model, dataloader_test, device):
     print(f"PSNR: {sum(psnr_list) / len(psnr_list)}")
     # print(f"SSIM: {sum(ssim_list) / len(ssim_list)}")
 
-def train(model, dataloader_train, dataloader_test, optimizer, criterion, n_epochs):
+def train(model, dataloader_train, dataloader_test, optimizer, criterion, n_epochs, device):
     model.train()
     model.to(device)
     for e in range(n_epochs):
-        for x, y in tqdm(dataloader_train, description=f"Iteration {e+1}"):
+        for x, y in tqdm(dataloader_train, desc=f"Iteration {e+1}"):
             x = x[0].to(device)
             y = y[0].to(device)
             
