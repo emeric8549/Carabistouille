@@ -8,7 +8,7 @@ Below are examples of what we can do with a simple auto-encoder. For instance, w
 
 
 ### Work to do:
-    - [x] implement pipeline to colorize image
-    - [x] implement pipeline to unblur image
-    - [ ] implement pipeline to create new numbers (random vectors in latent space using MNIST) (AE without skip connections)
-    - [ ] create VAE
+- [x] implement pipeline to colorize image
+- [x] implement pipeline to unblur image
+- [ ] implement pipeline to create new numbers (random vectors in latent space using MNIST) (AE without skip connections)
+- [ ] create VAE
