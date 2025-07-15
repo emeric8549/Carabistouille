@@ -6,6 +6,43 @@ import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import Dataset, DataLoader
 
+class MNIST_AE(Dataset):
+    def __init__(self, train=True, download=True):
+        self.base_dataset = torchvision.datasets.MNIST(
+            root='./data', train=train, download=download
+        )
+
+        self.transform_input = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.5,), (0.5,))
+        ])
+
+        self.transform_target = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.5,), (0.5,))
+        ])
+
+    def __len__(self):
+        return len(self.base_dataset)
+
+    def __getitem__(self, idx):
+        img, _ = self.base_dataset[idx]
+        input_img = self.transform_input(img)
+        target_img = self.transform_target(img)
+        return input_img, target_img
+
+
+
+def get_mnist(batch_size, shuffle=False, download=True):
+    train_dataset = MNIST_AE(train=True, download=download)
+    test_dataset = MNIST_AE(train=False, download=download)
+
+    dataloader_train = DataLoader(train_dataset, batch_size=batch_size, shuffle=shuffle, num_workers=8)
+    dataloader_test = DataLoader(test_dataset, batch_size=batch_size, shuffle=shuffle, num_workers=8)
+
+    return dataloader_train, dataloader_test
+
+
 
 class BlurredMNIST(Dataset):
     def __init__(self, train=True, download=True, kernel=5, sigma=(1, 20)):
