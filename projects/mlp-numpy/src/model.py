@@ -24,7 +24,7 @@ class MLP:
 
 
     def sigmoid(self, x):
-        return 1. / (1. + np.exp(-x))
+        return 1. / (1. + np.exp(-x + 1e-9))
 
     def softmax(self, x):
         exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))
@@ -65,8 +65,8 @@ class MLP:
                 delta = np.dot(delta, self.layers[i].T) * self.deriv_relu(self.z_values[i-1])
 
         for i in range(len(self.layers)):
-            self.layers[i] -= learning_rate * grads_w[i]
-            self.biases[i] -= learning_rate * grads_b[i]
+            self.layers[i] -= learning_rate * np.clip(grads_w[i], -0.1, 0.1)
+            self.biases[i] -= learning_rate * np.clip(grads_b[i], -0.1, 0.1)
 
 
 
