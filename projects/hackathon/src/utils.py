@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import cv2
+from skimage import io, exposure, img_as_ubyte
 import torch
 from torch.utils.data import Dataset
 
@@ -38,20 +39,32 @@ def filter_images(frac_detritus=0.1, seed=None):
     others = df[df['label'] != 'detritus']
 
     df_filtered = pd.concat([others, detritus])
-    df_filtered.to_csv('data/filtered/filtered_images.csv', index=False)
+    df_filtered.to_csv('data/filtered_images.csv', index=False)
     print(f"Original dataset size: {len(df)}")
-    print(f"Filtered images saved to 'data/filtered/filtered_images.csv' with {len(df_filtered)} entries.")
+    print(f"Filtered images saved to 'data/filtered_images.csv' with {len(df_filtered)} entries.")
+
+
 
 def resize_images(shape=(64, 64)):
-    df = pd.read_csv('data/filtered/filtered_images.csv')
+    df = pd.read_csv('data/filtered_images.csv')
     for img in df['image']:
         img_path = os.path.join('data/raw/', img)
         image = cv2.imread(img_path)
         resized_image = cv2.resize(image, shape)
-        resized_path = os.path.join('data/filtered/', img)
+        resized_path = os.path.join('data/resized/', img)
         cv2.imwrite(resized_path, resized_image)
 
-    print(f"Resized images saved to 'data/filtered/' with shape {shape}.")
+    print(f"Resized images saved to 'data/resized/' with shape {shape}.")
 
 
 
+def hist_norm_images(clip_limit=0.02, kernel_size=8):
+    df = pd.read_csv('data/filtered_images.csv')
+    for img in df['image']:
+        image_path = os.path.join('data/resized/', img)
+        image = io.imread(image_path)
+        img_eq = img_as_ubyte(exposure.equalize_adapthist(image, clip_limit=clip_limit, kernel_size=kernel_size))
+        new_image_path = os.path.join('data/norm/', img)
+        io.imsave(new_image_path, img_eq)
+
+    print("Histogram normalization applied to all images in 'data/resized/'.")
