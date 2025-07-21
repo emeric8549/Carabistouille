@@ -1,5 +1,7 @@
 import os
 import pandas as pd
+import numpy as np
+from tqdm import tqdm
 import cv2
 from skimage import io, exposure, img_as_ubyte
 import torch
@@ -47,24 +49,28 @@ def filter_images(frac_detritus=0.1, seed=None):
 
 def resize_images(shape=(64, 64)):
     df = pd.read_csv('data/filtered_images.csv')
-    for img in df['image']:
+    for img in tqdm(df['image'], desc=f"Resizing images with shape {shape}"):
         img_path = os.path.join('data/raw/', img)
         image = cv2.imread(img_path)
         resized_image = cv2.resize(image, shape)
         resized_path = os.path.join('data/resized/', img)
         cv2.imwrite(resized_path, resized_image)
 
-    print(f"Resized images saved to 'data/resized/' with shape {shape}.")
-
-
 
 def hist_norm_images(clip_limit=0.02, kernel_size=8):
-    df = pd.read_csv('data/filtered_images.csv')
-    for img in df['image']:
+    for img in tqdm(os.listdir('data/resized/'), desc="Histogram normalization"):
         image_path = os.path.join('data/resized/', img)
         image = io.imread(image_path)
         img_eq = img_as_ubyte(exposure.equalize_adapthist(image, clip_limit=clip_limit, kernel_size=kernel_size))
         new_image_path = os.path.join('data/norm/', img)
         io.imsave(new_image_path, img_eq)
 
-    print("Histogram normalization applied to all images in 'data/resized/'.")
+
+def convert_to_npy():
+    images = []
+    for img in os.listdir('data/norm/'):
+        image = cv2.imread(os.path.join('data/norm/', img))
+        images.append(image)
+
+    np.save('data/images.npy', np.stack(images))
+    print("Images converted to numpy array and saved as 'data/images.npy'.")
