@@ -81,11 +81,24 @@ def hist_norm_images(clip_limit=0.02, kernel_size=8):
         io.imsave(new_image_path, img_eq)
 
 
-def convert_to_npy():
-    images = []
-    for img in os.listdir('data/norm/'):
-        image = cv2.imread(os.path.join('data/norm/', img))
-        images.append(image)
+def get_datasets(test_size=0.2, stratify=False, seed=None):
+    images, labels = [], []
+    df = pd.read_csv('data/filtered_images.csv')
+    for _, row in df.iterrows():
+        image = cv2.imread(os.path.join('data/norm/', row['image']))
+        images.append(image / 255)
+        labels.append(row['class'])
 
-    np.save('data/images.npy', np.stack(images))
-    print("Images converted to numpy array and saved as 'data/images.npy'.")
+    images = np.transpose(np.stack(images), axes=(0, 3, 1, 2))
+    images_train, images_test, labels_train, labels_test = train_test_split(
+                                                                images, 
+                                                                labels, 
+                                                                test_size=test_size, 
+                                                                stratify=labels if stratify else None, 
+                                                                random_state=seed
+                                                                )
+
+    return torch.FloatTensor(images_train), 
+           torch.FloatTensor(images_test), 
+           torch.LongTensor(labels_train), 
+           torch.LongTensor(labels_test)
