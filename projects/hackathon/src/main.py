@@ -7,3 +7,4 @@ if __name__ == "__main__":
     hist_norm_images()
     
     images_train, images_test, labels_train, labels_test = get_datasets(test_size=test_size, stratify=True, seed=seed)
+    mean, std = get_stats(images_train)

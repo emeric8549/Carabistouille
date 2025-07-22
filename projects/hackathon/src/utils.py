@@ -102,3 +102,10 @@ def get_datasets(test_size=0.2, stratify=False, seed=None):
            torch.FloatTensor(images_test), 
            torch.LongTensor(labels_train), 
            torch.LongTensor(labels_test)
+
+
+def get_stats(dataset_train):
+    mean = torch.mean(dataset_train, dim=(0, 2, 3))
+    std = torch.std(dataset_train, dim=(0, 2, 3))
+
+    return mean, std
