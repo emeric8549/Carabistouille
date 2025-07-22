@@ -2,15 +2,22 @@ import os
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+
 import cv2
 from skimage import io, exposure, img_as_ubyte
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
 import torch
 from torch.utils.data import Dataset
 
+
+
 class PlankthonDataset(Dataset):
     def __init__(self, images, labels, transform):
-        self.images = torch.FloatTensor(images)
-        self.labels = torch.LongTensor(labels)
+        self.images = images
+        self.labels = labels
         self.transform = transform
 
     def __len__(self):
