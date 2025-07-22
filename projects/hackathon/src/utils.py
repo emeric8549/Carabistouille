@@ -48,10 +48,18 @@ def filter_images(frac_detritus=0.1, seed=None):
     others = df[df['label'] != 'detritus']
 
     df_filtered = pd.concat([others, detritus])
+
+    label_encoder = LabelEncoder()
+    labels = df_filtered['label'].values.tolist()
+    label_encoder.fit(labels)
+    df_filtered['class'] = df_filtered.apply(lambda row: label_encoder.transform([row['label']])[0], axis=1)
+
     df_filtered.to_csv('data/filtered_images.csv', index=False)
     print(f"Original dataset size: {len(df)}")
     print(f"Filtered images saved to 'data/filtered_images.csv' with {len(df_filtered)} entries.")
+    print(f"There are {len(label_encoder.classes_)} classes in this dataset")
 
+    return label_encoder
 
 
 def resize_images(shape=(64, 64)):
