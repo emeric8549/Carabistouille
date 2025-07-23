@@ -98,10 +98,7 @@ def get_datasets(test_size=0.2, stratify=False, seed=None):
                                                                 random_state=seed
                                                                 )
 
-    return torch.FloatTensor(images_train), 
-           torch.FloatTensor(images_test), 
-           torch.LongTensor(labels_train), 
-           torch.LongTensor(labels_test)
+    return torch.FloatTensor(images_train), torch.FloatTensor(images_test), torch.LongTensor(labels_train), torch.LongTensor(labels_test)
 
 
 def get_stats(dataset_train):
