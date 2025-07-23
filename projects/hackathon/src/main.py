@@ -2,9 +2,13 @@ from utils import *
 from torch.utils.data import DataLoader
 from torchvision.transforms import transforms
 
+seed = 42
+frac_detritus = 0.1
+test_size = 0.2
+batch_size = 256
 
 if __name__ == "__main__":
-    label_encoder = filter_images(frac_detritus=0.1, seed=42)
+    label_encoder = filter_images(frac_detritus=frac_detritus, seed=seed)
     resize_images()
     hist_norm_images()
     
