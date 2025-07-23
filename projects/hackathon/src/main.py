@@ -1,4 +1,6 @@
 from utils import *
+from torch.utils.data import DataLoader
+from torchvision.transforms import transforms
 
 
 if __name__ == "__main__":
@@ -8,3 +10,16 @@ if __name__ == "__main__":
     
     images_train, images_test, labels_train, labels_test = get_datasets(test_size=test_size, stratify=True, seed=seed)
     mean, std = get_stats(images_train)
+
+    transform = transforms.Compose([
+        transforms.Normalize(mean, std),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomVerticalFlip(),
+        transforms.RandomAffine(degrees=30, translate(0.1, 0.1))
+    ])
+
+    train_dataset = PlankthonDataset(images_train, labels_train, transform=transform)
+    test_dataset = PlankthonDataset(images_test, labels_test, transform=transform)
+
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=8)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=8)
