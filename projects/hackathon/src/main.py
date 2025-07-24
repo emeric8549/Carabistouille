@@ -29,7 +29,7 @@ if __name__ == "__main__":
         transforms.Normalize(mean, std),
         transforms.RandomHorizontalFlip(),
         transforms.RandomVerticalFlip(),
-        transforms.RandomAffine(degrees=30, translate(0.1, 0.1))
+        transforms.RandomAffine(degrees=30, translate=(0.1, 0.1))
     ])
 
     train_dataset = PlankthonDataset(images_train, labels_train, transform=transform)
