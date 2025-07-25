@@ -1,4 +1,7 @@
+import torch
 import torch.nn as nn
+from einops import repeat
+from einops.layers.torch import Rearrange, Reduce
 
 class CNN(nn.Module):
     def __init__(self, nblocks, nfilters, input_shape, nclasses):
@@ -48,4 +51,29 @@ class CNN(nn.Module):
             x = block(x) + x # add a residual connexion
         x = self.reduce(x)
         x = self.head(x)
+        return x
+
+
+
+class PatchEmbedding(nn.Module):
+    def __init__(self, out_channels, emb_size, in_channels=3, patch_size=8, img_size=64):
+        super().__init__()
+        self.patch_size = patch_size
+        self.projection = nn.Conv2d(in_channels, out_channels, kernel_size=patch_size, stride=patch_size)
+        self.patching = Rearrange('b c h w -> b (h w) c') # Flatten h and w
+        self.projection = nn.Linear(out_channels, emb_size)
+
+        self.cls_token = nn.Parameter(torch.randn(1, 1, emb_size)) # at the end of encoder, this token should contain information about all the patches
+        self.positional_embedding = nn.Parameter(torch.randn((img_size // patch_size) ** 2 + 1, emb_size))
+
+    def forward(self, x):
+        batch_size = x.shape[0]
+        x = self.projection(x)
+        x = self.patching(x)
+        x = self.projection(x)
+
+        cls_token = repeat(self.cls_token, '() n e -> b n e', b=batch_size)
+        x = torch.cat([cls_token, x], dim=1)
+        x += self.positional_embedding
+
         return x
