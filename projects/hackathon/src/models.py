@@ -77,3 +77,17 @@ class PatchEmbedding(nn.Module):
         x += self.positional_embedding
 
         return x
+
+
+class ClassificationHead(nn.Module):
+    def __init__(self, emb_size, n_classes):
+        super().__init__()
+        self.cls_proj = nn.Sequential(
+            Reduce('b n e -> b e', reduction='mean'),
+            nn.LayerNorm(emb_size),
+            nn.Linear(emb_size, n_classes),
+        )
+
+    def forward(self, x):
+        cls_pred = self.cls_proj(x[:, :-1])
+        return cls_pred
