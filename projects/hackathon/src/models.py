@@ -91,3 +91,20 @@ class ClassificationHead(nn.Module):
     def forward(self, x):
         cls_pred = self.cls_proj(x[:, :-1])
         return cls_pred
+
+
+class VisionTransformer(nn.Module):
+    def __init__(self, emb_size, dim_feedforward, n_head, n_layers, dropout=0, in_channels=3, out_channels=32, patch_size=8, img_size=64, n_classes=84):
+        super().__init__()
+        self.patch_embedding = PatchEmbedding(out_channels, emb_size, in_channels, patch_size, img_size)
+
+        encoder_layer = nn.TransformerEncoderLayer(emb_size, n_head, dim_feedforward, dropout, batch_first=True)
+        self.transformer = nn.TransformerEncoder(encoder_layer, n_layers)
+
+        self.head = ClassificationHead(emb_size, n_classes)
+
+    def forward(self, x):
+        x = self.patch_embedding(x)
+        x = self.transformer(x)
+        x = self.head(x)
+        return x
