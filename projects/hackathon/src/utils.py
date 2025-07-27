@@ -108,29 +108,47 @@ def get_stats(dataset_train):
     return mean, std
 
 
-def train(model, criterion, optimizer, epochs, train_dataloader, test_dataloader, device):
+def train(model, criterion, optimizer, epochs, patience, train_dataloader, test_dataloader, device):
     model = model.to(device)
-    train_losses, train_acc = [], []
+    best_loss = float('inf')
+    best_model = None
+    counter_patience = 0
 
-    for inputs, labels in train_dataloader:
-        inputs, labels = inputs.to(device), labels.to(device)
-        optimizer.zero_grad()
+    for epoch in range(epochs):
+        train_losses, train_acc = [], []
+        model.train()
+        print(f"Epoch {epoch + 1}")
+        for inputs, labels in train_dataloader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            optimizer.zero_grad()
 
-        outputs = model(inputs)
-        loss = criterion(outputs, labels)
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
 
-        loss.backward()
-        optimizer.step()
+            loss.backward()
+            optimizer.step()
 
-        train_losses.append(loss.item())
-        outputs = torch.argmax(outputs, dim=1)
-        train_acc.extend((labels == outputs).tolist())
+            train_losses.append(loss.item())
+            outputs = torch.argmax(outputs, dim=1)
+            train_acc.extend((labels == outputs).tolist())
 
-    print(f"Avg train loss: {np.mean(train_losses):.4f}\t Avg train acc: {np.mean(train_acc):.2%}")
+        print(f"Avg train loss: {np.mean(train_losses):.4f}\t Avg train acc: {np.mean(train_acc):.2%}")
 
-    test_loss, test_acc = test(model, criterion, test_dataloader, device)
-    print(f"Test loss: {test_loss:.4f}\t Test acc: {test_acc:.2%}\n")
+        test_loss, test_acc = test(model, criterion, test_dataloader, device)
+        print(f"Test loss: {test_loss:.4f}\t Test acc: {test_acc:.2%}\n")
 
+        if test_loss < best_loss:
+            best_loss = test_loss
+            best_model = model
+            counter_patience = 0
+
+        else:
+            counter_patience += 1
+            if counter_patience == patience:
+                print(f"Early stopping at epoch {epoch + 1} with best loss: {best_loss:.4f}...")
+                break
+
+    return best_model
 
 def test(model, criterion, test_dataloader, device):
     model.eval()
