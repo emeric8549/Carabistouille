@@ -14,13 +14,13 @@ frac_detritus = 0.1
 shape_images = (64, 64)
 test_size = 0.2
 batch_size = 256
-device = torch.device('cuda', if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 if __name__ == "__main__":
     label_encoder = filter_images(frac_detritus=frac_detritus, seed=seed)
-    resize_images(shape=shape_images)
-    hist_norm_images()
+    # resize_images(shape=shape_images)
+    # hist_norm_images()
     
     images_train, images_test, labels_train, labels_test = get_datasets(test_size=test_size, stratify=True, seed=seed)
     mean, std = get_stats(images_train)
@@ -39,8 +39,8 @@ if __name__ == "__main__":
     test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=8)
 
 
-    nblocks = 5
-    nfilters = 6
+    nblocks = 10
+    nfilters = 64
     input_shape = shape_images[0]
     nclasses = len(label_encoder.classes_)
     model = CNN(nblocks, nfilters, input_shape, nclasses)
