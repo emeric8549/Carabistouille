@@ -58,8 +58,7 @@ class CNN(nn.Module):
 class PatchEmbedding(nn.Module):
     def __init__(self, out_channels, emb_size, in_channels=3, patch_size=8, img_size=64):
         super().__init__()
-        self.patch_size = patch_size
-        self.projection = nn.Conv2d(in_channels, out_channels, kernel_size=patch_size, stride=patch_size)
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=patch_size, stride=patch_size)
         self.patching = Rearrange('b c h w -> b (h w) c') # Flatten h and w
         self.projection = nn.Linear(out_channels, emb_size)
 
@@ -68,7 +67,7 @@ class PatchEmbedding(nn.Module):
 
     def forward(self, x):
         batch_size = x.shape[0]
-        x = self.projection(x)
+        x = self.conv(x)
         x = self.patching(x)
         x = self.projection(x)
 
