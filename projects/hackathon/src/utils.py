@@ -162,3 +162,13 @@ def test(model, criterion, test_dataloader, device):
         acc.extend((labels == outputs).tolist())
 
     return np.mean(loss), np.mean(acc)
+
+
+def compute_class_weights(labels):
+    """
+    Calculate class weights based on the frequency of each class in the dataset.
+    """
+    class_counts = np.bincount(labels)
+    total_count = len(labels)
+    class_weights = total_count / (len(class_counts) * class_counts)
+    return torch.FloatTensor(class_weights)
