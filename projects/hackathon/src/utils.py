@@ -172,3 +172,79 @@ def compute_class_weights(labels):
     total_count = len(labels)
     class_weights = total_count / (len(class_counts) * class_counts)
     return torch.FloatTensor(class_weights)
+
+
+
+def train_KD(teacher, student, alpha, criterion, optimizer, epochs, patience, train_dataloader, test_dataloader, device):
+    teacher = teacher.to(device)
+    student = student.to(device)
+
+    best_model = None
+    best_loss = float('inf')
+    counter_patience = 0
+
+    teacher.eval()
+
+    for epoch in range(epochs):
+        train_losses_total, train_losses_student, train_acc = [], [], []
+        student.train()
+        print(f"Epoch {epoch + 1}")
+        for inputs, labels in train_dataloader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            optimizer.zero_grad()
+            
+            outputs = student(inputs)
+
+            with torch.no_grad():
+                labels_teacher = teacher(inputs)
+
+            loss_student = criterion(outputs, labels)
+            loss_kd = criterion(outputs, labels_teacher)
+
+            loss = alpha * loss_student + (1 - alpha) * loss_kd
+            loss.backward()
+            optimizer.step()
+
+            train_losses_total.append(loss.item())
+            train_losses_student.append(loss_student.item())
+            outputs = torch.argmax(outputs, dim=1)
+            train_acc.extend((labels == outputs).tolist())
+
+        print(f"Avg train loss: {np.mean(train_losses_total):.4f}\t Avg train acc: {np.mean(train_acc):.2%}")
+
+        test_loss_total, test_loss_student, test_acc = test_kd(teacher, student, alpha, criterion, test_dataloader, device)
+        print(f"Test loss total: {test_loss_total:.4f}\t Test loss student: {test_loss_student:.4f}\t Test acc: {test_acc:.2%}\n")
+
+        if test_loss_total < best_loss:
+            best_loss = test_loss_total
+            best_model = student
+            counter_patience = 0
+        else:
+            counter_patience += 1
+            if counter_patience == patience:
+                print(f"Early stopping at epoch {epoch + 1} with best loss: {best_loss:.4f}...")
+                break
+
+    return best_model
+
+def test_kd(teacher, student, alpha, criterion, test_dataloader, device):
+    student.eval()
+    test_losses_total, test_losses_student, test_acc = [], [], []
+    for inputs, labels in test_dataloader:
+        inputs, labels = inputs.to(device), labels.to(device)
+
+        outputs = student(inputs)
+        with torch.no_grad():
+            labels_teacher = teacher(inputs)
+        
+        loss_student = criterion(outputs, labels)
+        loss_kd = criterion(outputs, labels_teacher)
+
+        loss = alpha * loss_student + (1 - alpha) * loss_kd
+
+        test_losses_total.append(loss.item())
+        test_losses_student.append(loss_student.item())
+        outputs = torch.argmax(outputs, dim=1)
+        test_acc.extend((labels == outputs).tolist())
+
+    return np.mean(test_losses_total), np.mean(test_losses_student), np.mean(test_acc)
