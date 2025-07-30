@@ -210,9 +210,9 @@ def train_KD(teacher, student, alpha, criterion, optimizer, epochs, patience, tr
             outputs = torch.argmax(outputs, dim=1)
             train_acc.extend((labels == outputs).tolist())
 
-        print(f"Avg train loss: {np.mean(train_losses_total):.4f}\t Avg train acc: {np.mean(train_acc):.2%}")
+        print(f"Avg train loss total: {np.mean(train_losses_total):.4f}\t Avg train loss student: {np.mean(train_losses_student):.4f}\t Avg train acc: {np.mean(train_acc):.2%}")
 
-        test_loss_total, test_loss_student, test_acc = test_kd(teacher, student, alpha, criterion, test_dataloader, device)
+        test_loss_total, test_loss_student, test_acc = test_KD(teacher, student, alpha, criterion, test_dataloader, device)
         print(f"Test loss total: {test_loss_total:.4f}\t Test loss student: {test_loss_student:.4f}\t Test acc: {test_acc:.2%}\n")
 
         if test_loss_total < best_loss:
@@ -227,7 +227,7 @@ def train_KD(teacher, student, alpha, criterion, optimizer, epochs, patience, tr
 
     return best_model
 
-def test_kd(teacher, student, alpha, criterion, test_dataloader, device):
+def test_KD(teacher, student, alpha, criterion, test_dataloader, device):
     student.eval()
     test_losses_total, test_losses_student, test_acc = [], [], []
     for inputs, labels in test_dataloader:
