@@ -43,12 +43,18 @@ if __name__ == "__main__":
     nfilters = 64
     input_shape = shape_images[0]
     nclasses = len(label_encoder.classes_)
-    model = CNN(nblocks, nfilters, input_shape, nclasses)
+
+    teacher = CNN(nblocks, nfilters, input_shape, nclasses)
+    student = Small_CNN(in_channels=3, out_channels=16, img_size=input_shape, nclasses=nclasses)
 
     epochs = 100
-    patience = 2
+    patience = 10
     criterion = nn.CrossEntropyLoss()
-    lr = 1e-3
-    optimizer = Adam(model.parameters(), lr=lr)
+    lr = 1e-4
 
-    train(model, criterion, optimizer, epochs, patience, train_dataloader, test_dataloader, device)
+    optimizer_teacher = Adam(teacher.parameters(), lr=lr)
+    optimizer_student = Adam(student.parameters(), lr=lr)
+    alpha = 0.5
+
+    best_teacher = train(teacher, criterion, optimizer_teacher, epochs, patience, train_dataloader, test_dataloader, device)
+    best_student = train_KD(best_teacher, student, alpha, criterion, optimizer_student, epochs, patience, train_dataloader, test_dataloader, device)
