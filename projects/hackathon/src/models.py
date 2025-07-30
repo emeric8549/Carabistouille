@@ -79,12 +79,12 @@ class PatchEmbedding(nn.Module):
 
 
 class ClassificationHead(nn.Module):
-    def __init__(self, emb_size, n_classes):
+    def __init__(self, emb_size, nclasses):
         super().__init__()
         self.cls_proj = nn.Sequential(
             Reduce('b n e -> b e', reduction='mean'),
             nn.LayerNorm(emb_size),
-            nn.Linear(emb_size, n_classes),
+            nn.Linear(emb_size, nclasses),
         )
 
     def forward(self, x):
@@ -93,17 +93,44 @@ class ClassificationHead(nn.Module):
 
 
 class VisionTransformer(nn.Module):
-    def __init__(self, emb_size, dim_feedforward, n_head, n_layers, dropout=0, in_channels=3, out_channels=32, patch_size=8, img_size=64, n_classes=84):
+    def __init__(self, emb_size, dim_feedforward, n_head, n_layers, dropout=0, in_channels=3, out_channels=32, patch_size=8, img_size=64, nclasses=84):
         super().__init__()
         self.patch_embedding = PatchEmbedding(out_channels, emb_size, in_channels, patch_size, img_size)
 
         encoder_layer = nn.TransformerEncoderLayer(emb_size, n_head, dim_feedforward, dropout, batch_first=True)
         self.transformer = nn.TransformerEncoder(encoder_layer, n_layers)
 
-        self.head = ClassificationHead(emb_size, n_classes)
+        self.head = ClassificationHead(emb_size, nclasses)
 
     def forward(self, x):
         x = self.patch_embedding(x)
         x = self.transformer(x)
         x = self.head(x)
+        return x
+
+
+class Small_CNN(nn.Module):
+    def __init__(self, in_channels, out_channels, img_size, nclasses):
+        super().__init__()
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels // 2, kernel_size=5, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=4),
+        )
+
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(out_channels // 2, out_channels, kernel_size=3, padding=2),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=4),
+        )
+
+        new_img_size = img_size // 16
+        self.flatten = nn.Flatten()
+        self.linear = nn.Linear(out_channels * new_img_size * new_img_size, nclasses)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.conv2(x)
+        x = self.flatten(x)
+        x = self.linear(x)
         return x
