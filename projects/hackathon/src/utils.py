@@ -11,7 +11,8 @@ from sklearn.preprocessing import LabelEncoder
 
 import torch
 from torch.utils.data import Dataset
-
+import torch.nn as nn
+import torch.nn.functional as F
 
 
 class PlankthonDataset(Dataset):
@@ -193,13 +194,13 @@ def train_KD(teacher, student, alpha, criterion, optimizer, epochs, patience, tr
             inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
             
-            outputs = student(inputs)
+            outputs_student = student(inputs)
 
             with torch.no_grad():
-                labels_teacher = teacher(inputs)
+                outputs_teacher = teacher(inputs)
 
-            loss_student = criterion(outputs, labels)
-            loss_kd = criterion(outputs, labels_teacher)
+            loss_student = criterion(outputs_student, labels)
+            loss_kd = KL_softloss(outputs_student, outputs_teacher)
 
             loss = alpha * loss_student + (1 - alpha) * loss_kd
             loss.backward()
@@ -207,8 +208,8 @@ def train_KD(teacher, student, alpha, criterion, optimizer, epochs, patience, tr
 
             train_losses_total.append(loss.item())
             train_losses_student.append(loss_student.item())
-            outputs = torch.argmax(outputs, dim=1)
-            train_acc.extend((labels == outputs).tolist())
+            outputs_student = torch.argmax(outputs_student, dim=1)
+            train_acc.extend((labels == outputs_student).tolist())
 
         print(f"Avg train loss total: {np.mean(train_losses_total):.4f}\t Avg train loss student: {np.mean(train_losses_student):.4f}\t Avg train acc: {np.mean(train_acc):.2%}")
 
@@ -233,18 +234,27 @@ def test_KD(teacher, student, alpha, criterion, test_dataloader, device):
     for inputs, labels in test_dataloader:
         inputs, labels = inputs.to(device), labels.to(device)
 
-        outputs = student(inputs)
+        outputs_student = student(inputs)
         with torch.no_grad():
-            labels_teacher = teacher(inputs)
+            outputs_teacher = teacher(inputs)
         
-        loss_student = criterion(outputs, labels)
-        loss_kd = criterion(outputs, labels_teacher)
+        loss_student = criterion(outputs_student, labels)
+        loss_kd = KL_softloss(outputs_student, outputs_teacher)
 
         loss = alpha * loss_student + (1 - alpha) * loss_kd
 
         test_losses_total.append(loss.item())
         test_losses_student.append(loss_student.item())
-        outputs = torch.argmax(outputs, dim=1)
-        test_acc.extend((labels == outputs).tolist())
+        outputs_student = torch.argmax(outputs_student, dim=1)
+        test_acc.extend((labels == outputs_student).tolist())
 
     return np.mean(test_losses_total), np.mean(test_losses_student), np.mean(test_acc)
+
+
+def KL_softloss(outputs_student, outputs_teacher, temperature=4):
+    outputs_student /= temperature
+    outputs_teacher /= temperature
+
+    loss = nn.KLDivLoss(reduction='batchmean')
+
+    return loss(F.log_softmax(outputs_student, dim=1), F.softmax(outputs_teacher, dim=1)) * (temperature * temperature) 
