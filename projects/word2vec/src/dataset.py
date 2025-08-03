@@ -20,3 +20,13 @@ def generate_cbow_pairs(corpus, window_size=2):
         corpus_pairs.extend(pairs)
 
     return corpus_pairs
+
+
+def encode_pairs(pairs, word2idx):
+    encoded = []
+    for context, target in pairs:
+        context_ids = [word2idx[word] for word in context]
+        target_id = word2idx[target]
+        encoded.append([context_ids, target_id])
+
+    return encoded
