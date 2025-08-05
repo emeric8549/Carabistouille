@@ -1,5 +1,6 @@
 def tokenize(sentence):
-    return sentence.split(" ")
+    tokenized = sentence.split(" ")
+    return [word.lower() for word in tokenized]
 
 def build_vocab(pairs):
     vocab = set()
