@@ -5,12 +5,15 @@ class CBOWModel:
         self.W1 = np.random.randn(vocab_size, embedding_dim) * 0.01
         self.W2 = np.random.randn(embedding_dim, vocab_size) * 0.01
 
+    def softmax(self, x):
+        exp_x = np.exp(x - np.max(x))
+        return exp_x / np.sum(exp_x)
+
     def forward(self, context_ids):
         context_vecs = self.W1[context_ids]
         hidden = np.mean(context_vecs, axis=0)
         scores = np.dot(hidden, self.W2)
-        exp_scores = np.exp(scores - np.max(scores))
-        probs = exp_scores / np.sum(exp_scores)
+        probs = self.softmax(scores)
 
         return probs, hidden
 
