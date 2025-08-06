@@ -17,7 +17,7 @@ class CBOWModel:
 
         return probs, hidden
 
-    def backward(self, target_id, context_ids, probs, hidden, lr=1e-3):
+    def backward(self, context_ids, target_id, probs, hidden, lr=1e-3):
         dscores = probs.copy()
         dscores[target_id] -= 1
         dW2 = np.outer(hidden, dscores)
