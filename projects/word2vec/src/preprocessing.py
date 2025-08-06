@@ -8,7 +8,7 @@ def build_vocab(pairs):
 
     for context, target in pairs:
         vocab.update(context)
-        vocab.add(target)
+        vocab.update(target)
 
     for i, word in enumerate(vocab):
         word2idx[word] = i
