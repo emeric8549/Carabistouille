@@ -21,7 +21,7 @@ def generate_cbow_pairs(corpus, window_size=2):
     return corpus_pairs
 
 
-def encode_pairs(pairs, word2idx):
+def encode_cbow_pairs(pairs, word2idx):
     encoded = []
     for context, target in pairs:
         context_ids = [word2idx[word] for word in context]
@@ -50,3 +50,13 @@ def generate_skipgram_pairs(corpus, window_size=2):
         corpus_pairs.extend(pairs)
     
     return corpus_pairs
+
+
+def encode_skipgram_pairs(pairs, word2idx):
+    encoded = []
+    for target, context in pairs:
+        target_id = word2idx[target]
+        context_ids [word2idx[word] for word in context]
+        encoded.append([target_id, context_ids])
+
+    return encoded
