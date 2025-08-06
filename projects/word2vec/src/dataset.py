@@ -56,7 +56,7 @@ def encode_skipgram_pairs(pairs, word2idx):
     encoded = []
     for target, context in pairs:
         target_id = word2idx[target]
-        context_ids [word2idx[word] for word in context]
+        context_ids = [word2idx[word] for word in context]
         encoded.append([target_id, context_ids])
 
     return encoded
