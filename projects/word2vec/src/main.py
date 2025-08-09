@@ -4,6 +4,7 @@ from model_cbow import CBOWModel
 from model_skipgram import SkipGramModel
 from train import train
 from utils import visualize_embeddings
+from data_utils import load_wiki_texts
 
 corpus = [
     "le chat dort sur le canapé",
@@ -12,9 +13,13 @@ corpus = [
     "le jardin est vert",
 ]
 
+sentences = list(load_wiki_texts('data/frwiki-latest-pages-articles.xml.bz2', limit=10))
+pairs = generate_pairs(" ".join(sum(sentences, [])), window_size=2, skipgram=skipgram)
+#pairs = generate_pairs(corpus, window_size=2, skipgram=skipgram)
+
+
 skipgram=False
 
-pairs = generate_pairs(corpus, window_size=2, skipgram=skipgram)
 word2idx, idx2word, vocab_size = build_vocab(pairs, skipgram)
 encoded_pairs = encode_pairs(pairs, word2idx, skipgram)
  
