@@ -19,6 +19,7 @@ Work in progress
 - reinforcement learning I: minesweeper-rl
 - auto-encoder
 - hackathon (plankton images classification)
+- small-RAG using langchain et chroma
 
 
 ## **Future projects:**
@@ -31,5 +32,4 @@ Work in progress
 - reinforcement learning III: create an environment with Unity and ML-agents
 - diffusion model
 - neural ordinary differential equations
-- simple LLM (use vectorDB and Langchain)
 - create agent on a pre-trained LLM
