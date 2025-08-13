@@ -12,3 +12,16 @@ class RNNModel(nn.Module):
         out = out[:, -1, :]
         out = self.fc(out)
         return out
+
+
+class GRUModel(nn.Module):
+    def __init__(self, input_size, hidden_size=64, num_layers=2, num_classes=5, dropout=0.2):
+        super(GRUModel, self).__init__()
+        self.gru = nn.GRU(input_size, hidden_size, num_layers, batch_first=True, dropout=dropout)
+        self.fc = nn.Linear(hidden_size, num_classes)
+
+    def forward(self, x):
+        out, _ = self.gru(x)
+        out = out[:, -1, :]
+        out = self.fc(out)
+        return out
