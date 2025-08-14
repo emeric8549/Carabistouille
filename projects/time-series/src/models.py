@@ -38,3 +38,28 @@ class LSTMModel(nn.Module):
         out = out[:, -1, :]
         out = self.fc(out)
         return out
+
+
+class CNN1DModel(nn.Module):
+    def __init__(self, input_channels=1, num_classes=5):
+        super(CNN1DModel, self).__init__()
+        self.conv1 = nn.Conv1d(input_channels, 16, kernel_size=5, padding=2)
+        self.bn1 = nn.BatchNorm1d(16)
+        self.relu = nn.ReLU()
+        self.pool = nn.MaxPool1d(2)
+
+        self.conv2 = nn.Conv1d(16, 32, kernel_size=5, padding=2)
+        self.bn2 = nn.BatchNorm1d(32)
+
+        self.global_pool = nn.AdaptiveAvgPool1d(1)
+        self.fc = nn.Linear(32, num_classes)
+
+    def forward(self, x):
+        x = x.permute(0, 2, 1)
+        x = self.relu(self.bn1(self.conv1(x)))
+        x = self.pool(x)
+        x = self.relu(self.bn2(self.conv2(x)))
+        x = self.global_pool(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
