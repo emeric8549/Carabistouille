@@ -33,3 +33,16 @@ def load_data(train_path, test_path):
     y_test_t = torch.tensor(y_test, dtype=torch.float32)
 
     return X_train_t, y_train_t, X_test_t, y_test_t
+
+
+def get_model(model_name, input_size, num_classes):
+    if model_name == "rnn":
+        return RNNModel(input_size=input_size, num_classes=num_classes)
+    elif model_name == "gru":
+        return GRUModel(input_size=input_size, num_classes=num_classes)
+    elif model_name == "lstm":
+        return LSTMModel(input_size=input_size, num_classes=num_classes)
+    elif model_name == "cnn1d":
+        return CNN1DModel(input_size=input_size, num_classes=num_classes)
+    else:
+        raise ValueError(f"Unknown model: {model_name}")
