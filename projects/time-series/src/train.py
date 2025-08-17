@@ -1,5 +1,5 @@
 import pandas as pd
-import numpy as numpy
+import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.model_selection import train_test_split
 import torch
@@ -15,7 +15,7 @@ def load_data(train_path, test_path):
     test_df = pd.read_csv(test_path, header=None)
 
     X_train, y_train = train_df.iloc[:, :-1], train_df.iloc[:, -1]
-    X_test, y_test = test_df.iloc[:, :-1], test_df[:, -1]
+    X_test, y_test = test_df.iloc[:, :-1], test_df.iloc[:, -1]
 
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
@@ -89,7 +89,7 @@ def train(model, train_loader, test_loader, device, epochs=10, lr=1e-3):
         acc = 100 * correct / total
         print(f"Epoch [{epoch+1}/{epochs}], Training loss: {train_loss/len(train_loader):.4f}, Test loss: {test_loss/len(test_loader):.4f}, Test acc: {acc:.2f}%")
 
-        return model
+    return model
     
 
 if __name__ == "__main__":
@@ -101,3 +101,17 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
+    args = parser.parse_args()
+
+    X_train, y_train, X_test, y_test = load_data(args.train_path, args.test_path)
+
+    train_loader = DataLoader(TensorDataset(X_train, y_train), batch_size=args.batch_size, shuffle=True)
+    test_loader = DataLoader(TensorDataset(X_test, y_test), batch_size=args.batch_size, shuffle=False)
+
+    input_size = X_train.shape[2]
+    num_classes = y_train.shape[1]
+    model = get_model(args.model, input_size, num_classes)
+
+    trained_model = train(model, train_loader, test_loader, args.device, epochs=args.epochs, lr=args.lr)
+    torch.save(trained_model.state_dict(), f"model_{args.model}.pth")
+    print(f"Model saved as model_{args.model}.pth")
