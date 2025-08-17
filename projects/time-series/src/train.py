@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
+import argparse
 
 from models import RNNModel, GRUModel, LSTMModel, CNN1DModel
 
@@ -87,3 +88,16 @@ def train(model, train_loader, test_loader, device, epochs=10, lr=1e-3):
 
         acc = 100 * correct / total
         print(f"Epoch [{epoch+1}/{epochs}], Training loss: {train_loss/len(train_loader):.4f}, Test loss: {test_loss/len(test_loader):.4f}, Test acc: {acc:.2f}%")
+
+        return model
+    
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=str, required=True, choices=["rnn", "gru", "lstm", "cnn1d"], help="rnn | gru | lstm | cnn1d")
+    parser.add_argument("--train_path", type=str, default="data/mitbih_train.csv")
+    parser.add_argument("--test_path", type=str, default="data/mitbih_test.csv")
+    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--batch_size", type=int, default=64)
+    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
