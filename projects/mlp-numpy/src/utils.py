@@ -55,7 +55,7 @@ def draw_boundary(X, y, model):
     plt.contour(xx, yy, Z, levels=[0.5], colors="black", linewidths=2)
 
     sc0 = plt.scatter(X[y[:, 0]==0, 0], X[y[:, 0]==0, 1], color="blue", marker="+", label="Class 0")
-    sc0 = plt.scatter(X[y[:, 0]==1, 0], X[y[:, 0]==1, 1], color="red", marker="+", label="Class 1")
+    sc1 = plt.scatter(X[y[:, 0]==1, 0], X[y[:, 0]==1, 1], color="red", marker="+", label="Class 1")
 
     decision_boundary = mlines.Line2D([], [], color="black", linewidth=2, label="Decision boundary") # trick to add decision boundary to legend
 
