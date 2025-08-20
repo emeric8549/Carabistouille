@@ -45,7 +45,7 @@ class MLP:
         z = a @ self.layers[-1] + self.biases[-1]
         self.z_values.append(z)
 
-        return z
+        return self.last_act(z)
 
 
 
@@ -71,6 +71,6 @@ class MLP:
 
 
     def predict(self, x):
-        logits = self.forward(x)
-        a = np.rint(self.last_act(logits)) if self.last_act == self.sigmoid else self.last_act(logits).argmax(axis=1)
+        out = self.forward(x)
+        a = np.rint(out) if self.last_act == self.sigmoid else out.argmax(axis=1)
         return a
