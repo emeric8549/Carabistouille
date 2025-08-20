@@ -1,5 +1,4 @@
 import numpy as np
-from losses import BCE_loss, cross_entropy_loss
 
 def train(model, X_train, y_train, X_test, y_test, epochs, criterion, lr, patience):
     patience_counter = 0

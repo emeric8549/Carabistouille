@@ -2,6 +2,7 @@ import numpy as np
 from utils import get_moons, get_circles, get_data, split_data, draw_boundary
 from model import MLP
 from train import train
+from losses import BCE_loss, cross_entropy_loss
 import yaml
 
 with open("config.yaml") as f:
