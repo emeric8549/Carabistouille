@@ -11,12 +11,12 @@ with open("config.yaml") as f:
 
 dataset_name = config["data"]["dataset"]
 if dataset_name == "get_moons" or dataset_name == "get_circles":
-    dataset = get_moons if dataset=="get_moons" else get_circles
+    dataset = get_moons if dataset_name=="get_moons" else get_circles
     X, y = dataset(n_samples=int(config["data"]["n_samples"]),
                    noise=float(config["data"]["noise"]),
                    seed=int(config["data"]["seed"]))
 
-elif dataset == "get_data":
+elif dataset_name == "get_data":
     X, y = get_data(n_samples=int(config["data"]["n_samples"]),
                    n_features=int(config["data"]["n_features"]),
                    n_redundant=int(config["data"]["n_redundant"]),
