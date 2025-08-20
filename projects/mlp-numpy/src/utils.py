@@ -38,7 +38,8 @@ def split_data(X, y, test_size):
     return X_train, y_train, X_test, y_test
 
 
-def draw_boundary(X, y, model):
+def draw_boundary(X, y, model, filename):
+    filepath = "plots/" + filename
     x1_min, x1_max = X[:, 0].min() - 0.5, X[:, 0].max() + 0.5
     x2_min, x2_max = X[:, 1].min() - 0.5, X[:, 1].max() + 0.5
 
@@ -63,5 +64,5 @@ def draw_boundary(X, y, model):
     plt.xlabel("X1")
     plt.ylabel("X2")
     plt.title("Decision Boundary MLP")
-    plt.savefig("decision_boundary.png")
+    plt.savefig(filepath)
     plt.close()

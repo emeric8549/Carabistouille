@@ -47,4 +47,5 @@ best_model = train(model, X_train, y_train, X_test, y_test, epochs, criterion, l
 
 
 if dataset_name == "get_moons" or dataset_name == "get_circles":
-    draw_boundary(X_test, y_test, best_model)
+    filename = "decision_boundary_" + dataset_name[4:] + str(noise)
+    draw_boundary(X_test, y_test, best_model, filename)
