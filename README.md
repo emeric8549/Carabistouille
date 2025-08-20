@@ -8,11 +8,10 @@ All the models are trained using my own hardware so some of them may not deliver
 Below are the projects I have done so far and those that I plan to do (this is a non-exhaustive list)  
 
 
-## **Projects fully finished:**
-Work in progress
+## **Completed projects:**
+- mlp-numpy
 
 ## **Ongoing projects:**
-- mlp-numpy
 - resnet
 - unet
 - word2vec
