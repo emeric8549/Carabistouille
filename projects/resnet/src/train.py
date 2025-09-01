@@ -51,5 +51,7 @@ def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, pat
             print(f"Epoch {epoch+1} | Train loss: {np.mean(np.array(train_losses)):4f} | Test loss: {np.mean(np.array(losses_test))} | Test accuracy: {np.mean(np.array(acc_test))}")
 
     print(f"Best loss is {best_loss:.5f}")
+    filename = "best_models/" + model.name + ".pth"
+    torch.save(model.state_dict(), filename)
 
     return best_model
