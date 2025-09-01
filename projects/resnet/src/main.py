@@ -1,6 +1,6 @@
 import torch
 from train import train
-from model import ResNet34
+from models import ResNet34, Small_CNN
 from utils import get_data
 
 
