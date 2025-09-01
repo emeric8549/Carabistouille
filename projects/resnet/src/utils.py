@@ -1,5 +1,7 @@
 from torchvision.datasets import CIFAR10
 from torchvision import transforms
+from torch.utils.data import DataLoader
+
 
 def get_data(batch_size, shuffle=False, download=True):
     transform = transforms.Compose([transforms.Resize(256),
