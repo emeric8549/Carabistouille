@@ -28,11 +28,13 @@ def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, pat
             train_losses.append(loss.item())
 
             
-        losses_test = []
+        losses_test, acc_test = [], []
         for x, y in tqdm(dataloader_test, desc="Testing"):
             x, y = x.to(device), y.to(device)
             pred = model(x)
             losses_test.append(criterion(pred, y).item())
+            pred_labels = pred.argmax(dim=1)
+            acc_test.extend(pred_labels == y)
 
         if np.mean(losses_test) < best_loss:
             best_loss = np.mean(losses_test)
@@ -46,7 +48,7 @@ def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, pat
                 break
 
         if (epoch+1) % 100 == 0:
-            print(f"Epoch {epoch+1} | Train loss: {np.mean(np.array(train_losses)):4f} | Test loss: {np.mean(np.array(losses_test))}")
+            print(f"Epoch {epoch+1} | Train loss: {np.mean(np.array(train_losses)):4f} | Test loss: {np.mean(np.array(losses_test))} | Test accuracy: {np.mean(np.array(acc_test))}")
 
     print(f"Best loss is {best_loss:.5f}")
 
