@@ -74,7 +74,7 @@ class ResNet34(nn.Module):
 
 
 class Small_CNN(nn.Module):
-    def __init__(self, input_channels, output_features):
+    def __init__(self, input_channels, output_channels):
         super(Small_CNN, self).__init__()
 
         self.name = "smallcnn"
@@ -90,7 +90,7 @@ class Small_CNN(nn.Module):
 
         self.max_pool = nn.MaxPool2d(kernel_size=2)
 
-        self.linear = nn.Linear(in_features=2000, out_features=output_features)
+        self.linear = nn.Linear(in_features=2000, out_features=output_channels)
 
 
     def forward(self, x):
