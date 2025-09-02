@@ -1,14 +1,18 @@
 from tqdm import tqdm
 import numpy as np
 
+import torch
 import torch.nn as nn
 from torch.optim import SGD
 
 
 def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, patience=10):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"Using device: {device}")
+
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = SGD(resnet.parameters(), weight_decay=1e-4, momentum=0.9, lr=lr)
+    optimizer = SGD(model.parameters(), weight_decay=1e-4, momentum=0.9, lr=lr)
     
     best_loss = float('inf')
     best_model = None
@@ -47,7 +51,7 @@ def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, pat
                 print(f"Early stopping at epoch {epoch+1}...")
                 break
 
-        if (epoch+1) % 100 == 0:
+        if (epoch+1) % 10 == 0:
             print(f"Epoch {epoch+1} | Train loss: {np.mean(np.array(train_losses)):5f} | Test loss: {np.mean(np.array(losses_test)):5f} | Test accuracy: {np.mean(np.array(acc_test)):2%}")
 
     print(f"Best loss is {best_loss:.5f}")
