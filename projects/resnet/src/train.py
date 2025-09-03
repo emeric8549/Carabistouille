@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import numpy as np
+import copy
 
 import torch
 import torch.nn as nn
@@ -19,6 +20,7 @@ def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, pat
     patience_counter = 0
 
     for epoch in range(epochs):
+        model.train()
         train_losses = []
         for x, y in tqdm(dataloader_train, desc="Training"):
             x, y = x.to(device), y.to(device)
@@ -29,33 +31,34 @@ def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, pat
 
             loss.backward()
             optimizer.step()
-            train_losses.append(loss.item())
+            train_losses.append(loss.cpu().item())
 
-            
+        model.eval()
         losses_test, acc_test = [], []
-        for x, y in tqdm(dataloader_test, desc="Testing"):
-            x, y = x.to(device), y.to(device)
-            pred = model(x)
-            losses_test.append(criterion(pred, y).item())
-            pred_labels = pred.argmax(dim=1)
-            acc_test.extend(pred_labels == y)
+        with torch.no_grad():
+            for x, y in tqdm(dataloader_test, desc="Testing"):
+                x, y = x.to(device), y.to(device)
+                pred = model(x)
+                losses_test.append(criterion(pred, y).cpu().item())
+                pred_labels = pred.argmax(dim=1)
+                acc_test.extend((pred_labels == y).cpu())
 
         if np.mean(losses_test) < best_loss:
             best_loss = np.mean(losses_test)
-            best_model = model
+            best_model = copy.deepcopy(model)
             patience_counter = 0
         
         else:
             patience_counter += 1
-            if patience_counter == patience:
+            if patience_counter >= patience:
                 print(f"Early stopping at epoch {epoch+1}...")
                 break
 
-        if (epoch+1) % 10 == 0:
-            print(f"Epoch {epoch+1} | Train loss: {np.mean(np.array(train_losses)):5f} | Test loss: {np.mean(np.array(losses_test)):5f} | Test accuracy: {np.mean(np.array(acc_test)):2%}")
+        if (epoch+1) % 1 == 0:
+            print(f"Epoch {epoch+1} | Train loss: {np.mean(train_losses):5f} | Test loss: {np.mean(losses_test):5f} | Test accuracy: {np.mean(acc_test):2%}")
 
     print(f"Best loss is {best_loss:.5f}")
     filename = "best_models/" + model.name + ".pth"
-    torch.save(model.state_dict(), filename)
+    torch.save(best_model.state_dict(), filename)
 
     return best_model
