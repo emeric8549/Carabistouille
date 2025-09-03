@@ -79,23 +79,24 @@ class Small_CNN(nn.Module):
 
         self.name = "smallcnn"
 
-        self.conv1 = nn.Conv2d(in_channels=input_channels, out_channels=64, kernel_size=3)
-        self.bn1 = nn.BatchNorm2d(64)
-        self.conv2 = nn.Conv2d(in_channels=64, out_channels=256, kernel_size=3)
-        self.bn2 = nn.BatchNorm2d(256)
-        self.conv3 = nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3)
-        self.bn3 = nn.BatchNorm2d(512)
+        self.conv1 = nn.Conv2d(in_channels=input_channels, out_channels=16, kernel_size=3, stride=2, padding=1)
+        self.bn1 = nn.BatchNorm2d(16)
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=2, padding=1)
+        self.bn2 = nn.BatchNorm2d(32)
 
         self.relu = nn.ReLU()
 
         self.max_pool = nn.MaxPool2d(kernel_size=2)
 
-        self.linear = nn.Linear(in_features=2000, out_features=output_channels)
+        self.flatten = nn.Flatten()
+        img_size = 224 // 4 // 4
+        self.linear = nn.Linear(in_features=img_size * img_size * 32, out_features=output_channels)
 
 
     def forward(self, x):
-        x = self.relu(self.bn1(self.conv1(x)))
-        x = self.relu(self.bn2(self.conv2(x)))
-        x = self.bn3(self.conv3(x))
+        x = self.max_pool(self.relu(self.bn1(self.conv1(x))))
+        x = self.max_pool(self.relu(self.bn2(self.conv2(x))))
+        x = self.flatten(x)
+        x = self.linear(x)
 
         return x
