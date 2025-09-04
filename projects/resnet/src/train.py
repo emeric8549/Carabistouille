@@ -8,15 +8,16 @@ from torch.optim import SGD
 
 
 def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, patience=10):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
+    print(f"Model: {model.name}")
+    print(f"Number of parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad())}")
+    filename = "best_models/" + model.name + ".pth"
 
     model = model.to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = SGD(model.parameters(), weight_decay=1e-4, momentum=0.9, lr=lr)
     
     best_loss = float('inf')
-    best_model = None
     patience_counter = 0
 
     for epoch in range(epochs):
@@ -45,7 +46,7 @@ def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, pat
 
         if np.mean(losses_test) < best_loss:
             best_loss = np.mean(losses_test)
-            best_model = copy.deepcopy(model)
+            torch.save(model.state_dict(), filename)
             patience_counter = 0
         
         else:
@@ -58,7 +59,3 @@ def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, pat
             print(f"Epoch {epoch+1} | Train loss: {np.mean(train_losses):5f} | Test loss: {np.mean(losses_test):5f} | Test accuracy: {np.mean(acc_test):2%}")
 
     print(f"Best loss is {best_loss:.5f}")
-    filename = "best_models/" + model.name + ".pth"
-    torch.save(best_model.state_dict(), filename)
-
-    return best_model
