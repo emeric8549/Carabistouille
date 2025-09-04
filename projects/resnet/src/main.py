@@ -2,6 +2,7 @@ import torch
 from train import train
 from models import ResNet34, Small_CNN
 from utils import get_data
+from visualize_misclassified import viz_wrong
 
 
 epochs = 1000
@@ -20,3 +21,8 @@ if __name__ == "__main__":
     if train_models:
         train(resnet, dataloader_train, dataloader_test, device, lr, epochs, patience)
         train(cnn, dataloader_train, dataloader_test, device, lr, epochs, patience)
+
+    resnet.load_state_dict(torch.load("best_models/resnet34.pth"))
+    cnn.load_state_dict(torch.load("best_models/smallcnn.pth"))
+
+    viz_wrong(resnet, cnn, dataloader_test, device)
