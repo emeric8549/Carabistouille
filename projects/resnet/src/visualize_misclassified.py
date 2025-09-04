@@ -23,3 +23,23 @@ def save(imgs, true_labels, wrong_labels, nrows=2, ncols=2):
 
     plt.savefig("misclassified.png")
     plt.close()
+
+
+def viz_wrong(resnet, cnn, dataloader, device):
+    mean = torch.tensor([0.485, 0.456, 0.406]).reshape(1, 3, 1, 1).to(device)
+    std = torch.tensor([0.229, 0.224, 0.225]).reshape(1, 3, 1, 1).to(device)
+
+    imgs = None
+    img_true_labels, img_cnn_labels = [], []
+
+    for x, y in dataloader:
+        x, y = x.to(device), y.to(device)
+        out_resnet = resnet(x)
+        out_cnn = cnn(x)
+
+        pred_resnet = torch.argmax(out_resnet, dim=1)
+        pred_cnn = torch.argmax(out_cnn, dim=1)
+
+        img_idx = torch.logical_and((pred_resnet == y), (pred_cnn != y))
+
+        
