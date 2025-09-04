@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import torch
 import torchvision.transforms.functional as F
 
 
@@ -42,4 +43,13 @@ def viz_wrong(resnet, cnn, dataloader, device):
 
         img_idx = torch.logical_and((pred_resnet == y), (pred_cnn != y))
 
-        
+        imgs = torch.cat((imgs, x[img_idx]), dim=0) if imgs is not None else x[img_idx]
+        img_true_labels.extend(y[img_idx].tolist())
+        img_cnn_labels.extend(pred_cnn[img_idx].tolist())
+
+        if len(img_true_labels) >= 10:
+            break
+
+    imgs = (255 * (imgs * std + mean)).type(torch.ByteTensor)
+
+    save(imgs, img_true_labels, img_cnn_labels, nrows=2, ncols=3)
