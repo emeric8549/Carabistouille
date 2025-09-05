@@ -31,4 +31,6 @@ def get_data(batch_size, shuffle=False, download=True):
                                 shuffle=shuffle,
                                 num_workers=8)
 
-    return dataloader_train, dataloader_test
+    classes = ["plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
+    
+    return dataloader_train, dataloader_test, classes

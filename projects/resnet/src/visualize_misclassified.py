@@ -4,10 +4,7 @@ import torch
 import torchvision.transforms.functional as F
 
 
-def save(imgs, true_labels, wrong_labels, nrows=2, ncols=2):
-    classes = ('plane', 'car', 'bird', 'cat',
-        'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-
+def save(imgs, true_labels, wrong_labels, classes, nrows=2, ncols=2):
     fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(16, 8))
 
     i = 0
@@ -26,7 +23,7 @@ def save(imgs, true_labels, wrong_labels, nrows=2, ncols=2):
     plt.close()
 
 
-def viz_wrong(resnet, cnn, dataloader, device):
+def viz_wrong(resnet, cnn, dataloader, device, classes):
     mean = torch.tensor([0.485, 0.456, 0.406]).reshape(1, 3, 1, 1).to(device)
     std = torch.tensor([0.229, 0.224, 0.225]).reshape(1, 3, 1, 1).to(device)
 
@@ -52,4 +49,4 @@ def viz_wrong(resnet, cnn, dataloader, device):
 
     imgs = (255 * (imgs * std + mean)).type(torch.ByteTensor)
 
-    save(imgs, img_true_labels, img_cnn_labels, nrows=2, ncols=3)
+    save(imgs, img_true_labels, img_cnn_labels, classes, nrows=2, ncols=3)

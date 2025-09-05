@@ -11,7 +11,7 @@ batch_size = 256
 lr = 1e-3
 train_models = True
 
-dataloader_train, dataloader_test = get_data(batch_size=batch_size, shuffle=True)
+dataloader_train, dataloader_test, classes = get_data(batch_size=batch_size, shuffle=True)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 resnet = ResNet34(input_channels=3, output_channels=10).to(device)
@@ -25,4 +25,4 @@ if __name__ == "__main__":
     resnet.load_state_dict(torch.load("best_models/resnet34.pth"))
     cnn.load_state_dict(torch.load("best_models/smallcnn.pth"))
 
-    viz_wrong(resnet, cnn, dataloader_test, device)
+    viz_wrong(resnet, cnn, dataloader_test, device, classes)
