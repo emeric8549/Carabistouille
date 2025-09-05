@@ -1,10 +1,34 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
 import torch
 import torchvision.transforms.functional as F
 
 
-def save(imgs, true_labels, wrong_labels, classes, nrows=2, ncols=2):
+def save_confusion_matrices(y, resnet_pred, cnn_pred, classes):
+    true_classes = [classes[y[i]] for i in range(len(y))]
+    resnet_classes = [classes[resnet_pred[i]] for i in range(len(resnet_pred))]
+    cnn_classes = [classes[cnn_pred[i]] for i in range(len(cnn_pred))]
+
+    cm_resnet = confusion_matrix(true_classes, resnet_classes, labels=classes)
+    cm_cnn = confusion_matrix(true_classes, cnn_classes, labels=classes)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
+    disp_resnet = ConfusionMatrixDisplay(confusion_matrix=cm_resnet, display_labels=classes)
+    disp_resnet.plot(ax=ax1, cmap=plt.cm.Blues, colorbar=False)
+    ax1.set_title("ResNet34")
+
+    disp_cnn = ConfusionMatrixDisplay(confusion_matrix=cm_cnn, display_labels=classes)
+    disp_cnn.plot(ax=ax2, cmap=plt.cm.Blues, colorbar=False)
+    ax2.set_title("Small CNN")
+
+    plt.savefig("confusion_matrices.png")
+    plt.close()
+    
+
+def save_img_predictions(imgs, true_labels, wrong_labels, classes, nrows=2, ncols=2):
     fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(16, 8))
 
     i = 0
@@ -49,4 +73,4 @@ def viz_wrong(resnet, cnn, dataloader, device, classes):
 
     imgs = (255 * (imgs * std + mean)).type(torch.ByteTensor)
 
-    save(imgs, img_true_labels, img_cnn_labels, classes, nrows=2, ncols=3)
+    save_img_predictions(imgs, img_true_labels, img_cnn_labels, classes, nrows=2, ncols=3)
