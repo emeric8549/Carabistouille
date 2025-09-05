@@ -1,6 +1,5 @@
 from tqdm import tqdm
 import numpy as np
-import copy
 
 import torch
 import torch.nn as nn
@@ -10,7 +9,7 @@ from torch.optim import SGD
 def train(model, dataloader_train, dataloader_test, device, lr, epochs=1000, patience=10):
     print(f"Using device: {device}")
     print(f"Model: {model.name}")
-    print(f"Number of parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad())}")
+    print(f"Number of parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}")
     filename = "best_models/" + model.name + ".pth"
 
     model = model.to(device)
