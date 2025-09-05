@@ -2,6 +2,9 @@
 data/
 dataset/
 
+# Models
+best_models/
+
 # RL Runs
 runs/
 
