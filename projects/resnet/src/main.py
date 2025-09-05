@@ -22,8 +22,8 @@ if __name__ == "__main__":
     if train_models:
         train(cnn, dataloader_train, dataloader_test, device, lr, epochs, patience)
         train(resnet, dataloader_train, dataloader_test, device, lr, epochs, patience)
-
-    cnn.load_state_dict(torch.load("best_models/smallcnn.pth"))
-    resnet.load_state_dict(torch.load("best_models/resnet34.pth"))
+    else:
+        cnn.load_state_dict(torch.load("best_models/smallcnn.pth"))
+        resnet.load_state_dict(torch.load("best_models/resnet34.pth"))
     
     create_visualizations(resnet, cnn, dataloader_test, device, classes)
