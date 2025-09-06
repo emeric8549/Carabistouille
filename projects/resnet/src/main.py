@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    dataloader_train, dataloader_test, classes = get_data(batch_size=args.batch_size, shuffle=True)
+    dataloader_train, dataloader_test, classes = get_data(dataset_name=args.dataset, batch_size=args.batch_size, shuffle=True)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     cnn = Small_CNN(input_channels=3, output_channels=len(classes)).to(device)
