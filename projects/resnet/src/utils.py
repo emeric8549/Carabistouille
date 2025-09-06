@@ -4,8 +4,6 @@ from torch.utils.data import DataLoader
 
 
 def get_data(dataset_name="CIFAR10", batch_size=32, shuffle=False, download=True):
-
-    print(dataset_name)
     if dataset_name == "CIFAR10":
         dataset = CIFAR10
         mean = [0.4914, 0.4822, 0.4465]
