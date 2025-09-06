@@ -11,9 +11,9 @@ I have chosen to implement ResNet-34, a model with more than 21 millions paramet
 You can find below the outcome on CIFAR10 of the ResNet model compared to a simple CNN that has only ~67K parameters.  
 Looking at the confusion matrices, we can clearly see that the ResNet outperforms the CNN.  
 
-![confusion_matrices](confusion_matrices.png)
+![confusion_matrices](confusion_matrices_CIFAR10.png)
 
 
 The second visualization represents some of the inputs that have been misclassified by the CNN but not by the ResNet.  
 
-![misclassifications](misclassified.png)
+![misclassifications](misclassified_CIFAR10.png)
