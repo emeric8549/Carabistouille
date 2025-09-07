@@ -70,16 +70,16 @@ Here are the performance of both models on CIFAR10 and CIFAR100 test sets
 #### CIFAR10
 | Model  | Best loss | Best accuracy |
 | ------------- | ------------- | ------------- |
-| CNN  | Content Cell  | Content Cell  |
-| ResNet-34  | Content Cell  | Content Cell  |
+| CNN  | 0.9387  | 66.80% |
+| ResNet-34  | 0.3120  | 90.12% |
 
 
 
 #### CIFAR100
 | Model  | Best loss | Best accuracy |
 | ------------- | ------------- | ------------- |
-| CNN  | Content Cell  | Content Cell  |
-| ResNet-34  | Content Cell  | Content Cell  |
+| CNN  | 2.477  | 39.03% |
+| ResNet-34  | 1.188  | 69.46% |
 
 ### Visualizations
   
