@@ -67,21 +67,19 @@ You can find below the outcome of the ResNet model compared to a simple CNN that
 
 Here are the performance of both models on CIFAR10 and CIFAR100 test sets
 
-| CIFAR10 |
-| ---------------------------------- |
+#### CIFAR10
 | Model  | Best loss | Best accuracy |
-| ------------- | ------------- |
-| CNN  | Content Cell  |
-| ResNet-34  | Content Cell  |
+| ------------- | ------------- | ------------- |
+| CNN  | Content Cell  | Content Cell  |
+| ResNet-34  | Content Cell  | Content Cell  |
 
 
 
-| CIFAR100 |
-| ---------------------------------- |
+#### CIFAR100
 | Model  | Best loss | Best accuracy |
-| ------------- | ------------- |
-| CNN  | Content Cell  |
-| ResNet-34  | Content Cell  |
+| ------------- | ------------- | ------------- |
+| CNN  | Content Cell  | Content Cell  |
+| ResNet-34  | Content Cell  | Content Cell  |
 
 ### Visualizations
   
