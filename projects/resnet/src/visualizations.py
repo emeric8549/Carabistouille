@@ -7,7 +7,7 @@ import torch
 import torchvision.transforms.functional as F
 
 
-def save_confusion_matrices(y, resnet_pred, cnn_pred, classes):
+def save_confusion_matrices(y, resnet_pred, cnn_pred, classes, dataset_name):
     true_classes = [classes[y[i]] for i in range(len(y))]
     resnet_classes = [classes[resnet_pred[i]] for i in range(len(resnet_pred))]
     cnn_classes = [classes[cnn_pred[i]] for i in range(len(cnn_pred))]
@@ -24,11 +24,12 @@ def save_confusion_matrices(y, resnet_pred, cnn_pred, classes):
     disp_cnn.plot(ax=ax2, cmap=plt.cm.cividis, colorbar=False)
     ax2.set_title("Small CNN")
 
-    plt.savefig("confusion_matrices.png")
+    filename = "confusion_matrices_" + dataset_name + ".png"
+    plt.savefig(filename)
     plt.close()
 
 
-def save_img_predictions(imgs, true_labels, wrong_labels, idx, classes, nrows=2, ncols=2):
+def save_img_predictions(imgs, true_labels, wrong_labels, idx, classes, dataset_name, nrows=2, ncols=2):
     fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(16, 8))
 
     i = 0
@@ -43,7 +44,8 @@ def save_img_predictions(imgs, true_labels, wrong_labels, idx, classes, nrows=2,
 
             i += 1
 
-    plt.savefig("misclassified.png")
+    filename = "misclassified_" + dataset_name + ".png"
+    plt.savefig(filename)
     plt.close()
 
 
@@ -79,5 +81,5 @@ def create_visualizations(resnet, cnn, dataloader, device, classes, dataset_name
     idx = np.where(np.array(img_idx_list) == 1)[0]
 
     imgs_unnormalized = (255 * (imgs * std + mean)).type(torch.ByteTensor)
-    save_confusion_matrices(y_true_list, resnet_pred_list, cnn_pred_list, classes)
-    save_img_predictions(imgs_unnormalized, y_true_list, cnn_pred_list, idx, classes, nrows=2, ncols=3)
+    save_confusion_matrices(y_true_list, resnet_pred_list, cnn_pred_list, classes, dataset_name)
+    save_img_predictions(imgs_unnormalized, y_true_list, cnn_pred_list, idx, classes, dataset_name, nrows=2, ncols=3)
