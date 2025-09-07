@@ -47,9 +47,13 @@ def save_img_predictions(imgs, true_labels, wrong_labels, idx, classes, nrows=2,
     plt.close()
 
 
-def create_visualizations(resnet, cnn, dataloader, device, classes):
-    mean = torch.tensor([0.485, 0.456, 0.406]).reshape(1, 3, 1, 1).to(device)
-    std = torch.tensor([0.229, 0.224, 0.225]).reshape(1, 3, 1, 1).to(device)
+def create_visualizations(resnet, cnn, dataloader, device, classes, dataset_name):
+    if dataset_name == "CIFAR10":
+        mean = torch.tensor([0.4914, 0.4822, 0.4465]).reshape(1, 3, 1, 1).to(device)
+        std = torch.tensor([0.2470, 0.2435, 0.2616]).reshape(1, 3, 1, 1).to(device)
+    else:
+        mean = torch.tensor([0.5071, 0.4865, 0.4409]).reshape(1, 3, 1, 1).to(device)
+        std = torch.tensor([0.2673, 0.2564, 0.2761]).reshape(1, 3, 1, 1).to(device)
 
     imgs = None
     img_idx_list, y_true_list, resnet_pred_list, cnn_pred_list = [], [], [], []

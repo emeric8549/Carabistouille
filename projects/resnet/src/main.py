@@ -40,4 +40,4 @@ if __name__ == "__main__":
         resnet.load_state_dict(torch.load(resnet_file))
 
 
-    create_visualizations(resnet, cnn, dataloader_test, device, classes)
+    create_visualizations(resnet, cnn, dataloader_test, device, classes, args.dataset)
