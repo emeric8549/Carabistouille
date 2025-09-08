@@ -1,22 +1,35 @@
-from torchvision.datasets import CIFAR10
+from torchvision.datasets import CIFAR10, CIFAR100
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
 
-def get_data(batch_size, shuffle=False, download=True):
-    transform = transforms.Compose([transforms.Resize(256),
-                                    transforms.RandomHorizontalFlip(0.5),
-                                    transforms.RandomCrop(224),
-                                    transforms.ToTensor(),
-                                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]) # We use the default per_pixel normalization based on the ImageNet dataset
-                                    ])
+def get_data(dataset_name="CIFAR10", batch_size=32, shuffle=False, download=True):
+    if dataset_name == "CIFAR10":
+        dataset = CIFAR10
+        mean = [0.4914, 0.4822, 0.4465]
+        std = [0.2470, 0.2435, 0.2616]
+    elif dataset_name == "CIFAR100":    
+        dataset = CIFAR100
+        mean = [0.5071, 0.4865, 0.4409]
+        std = [0.2673, 0.2564, 0.2761]
+    else:
+        raise ValueError("Dataset not recognized. Please use 'CIFAR10' or 'CIFAR100'.")
 
-    data_train = CIFAR10(root='./dataset/train',
+
+    transform = transforms.Compose([transforms.Resize(256),
+                                transforms.RandomHorizontalFlip(0.5),
+                                transforms.RandomCrop(224),
+                                transforms.ToTensor(),
+                                transforms.Normalize(mean=mean, std=std)
+                                ])
+    
+
+    data_train = dataset(root='./dataset/train',
                         train=True,
                         transform=transform,
                         download=download)
 
-    data_test = CIFAR10(root='./dataset/test',
+    data_test = dataset(root='./dataset/test',
                         train=False,
                         transform=transform,
                         download=download)
@@ -31,4 +44,6 @@ def get_data(batch_size, shuffle=False, download=True):
                                 shuffle=shuffle,
                                 num_workers=8)
 
-    return dataloader_train, dataloader_test
+    classes = data_train.classes
+    
+    return dataloader_train, dataloader_test, classes
