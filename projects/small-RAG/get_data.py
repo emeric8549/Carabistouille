@@ -1,4 +1,7 @@
+import os
 import wikipediaapi
+
+os.makedirs("data", exist_ok=True)
 
 wiki = wikipediaapi.Wikipedia(
     language="fr",
@@ -14,6 +17,6 @@ for topic in topics:
     if page.exists():
         corpus.append(page.text)
 
-with open("data/physics_articles.txt", "w", encoding="utf-8") as f:
+with open("data/physics_articles.txt", "w+", encoding="utf-8") as f:
     for article in corpus:
         f.write(article + "\n\n")
