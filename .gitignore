@@ -5,6 +5,9 @@ dataset/
 # Models
 best_models/
 
+# vector DB
+chroma_db/
+
 # RL Runs
 runs/
 
