@@ -1,5 +1,5 @@
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_community.llms import CTransformers
 
@@ -20,4 +20,4 @@ while True:
     query = input("Ask your question about physics (or 'quit'): ")
     if query.lower() == "quit":
         break
-    print(qa.run(query))
+    print(qa.invoke(query)["result"])
