@@ -1,15 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import colors
 from matplotlib.colors import ListedColormap, BoundaryNorm
-import time 
 
 class MinesweeperEnv:
-    def __init__(self, height=10, width=10, num_mines=10, rendering=None):
+    def __init__(self, height=10, width=10, num_mines=10, rendering=None, render_delay=0.5):
         self.height = height
         self.width = width
         self.num_mines = num_mines
         self.rendering = rendering
+        self.render_delay = render_delay
         self.n_actions = height * width
         self.history = []
 
@@ -133,7 +132,7 @@ class MinesweeperEnv:
 
             self.fig.canvas.draw()
             self.fig.canvas.flush_events()
-            plt.pause(0.5)
+            plt.pause(self.render_delay)
 
     def close(self):
         if self.rendering == "human":
