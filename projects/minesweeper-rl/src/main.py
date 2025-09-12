@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("--rendering", type=bool, default=False, help="Enable rendering")
     args = parser.parse_args()
 
-    rendering = args.rendering if args.n_episodes == 1 else False
+    rendering = args.rendering
     env = MinesweeperEnv(args.height, args.width, args.n_mines, rendering=rendering)
     agent = HeuristicAgent() if args.agent == "heuristic" else RandomAgent()
 
