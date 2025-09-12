@@ -3,6 +3,8 @@ import numpy as np
 from collections import deque
 import torch
 
+from heuristic_agent import HeuristicAgent
+from random_agent import RandomAgent
 
 class ReplayBuffer:
     def __init__(self, capacity, device):
@@ -29,6 +31,19 @@ class ReplayBuffer:
     def __len__(self):
         return len(self.buffer)
     
+
+def create_agent(agent_name):
+    if agent_name == "heuristic":
+        return HeuristicAgent()
+    elif agent_name == "random":
+        return RandomAgent()
+    elif agent_name == "q-learning":
+        raise NotImplementedError("Q-learning agent not implemented yet.")
+    elif agent_name == "dqn":
+        raise NotImplementedError("DQN agent not implemented yet.")
+    else:
+        raise ValueError(f"Unknown agent type: {agent_name}")
+
 
 def episode(env, agent, replay_buffer=None):
     obs = env.reset()

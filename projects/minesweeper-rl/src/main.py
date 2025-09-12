@@ -1,7 +1,5 @@
 from minesweeper_env import MinesweeperEnv
-from heuristic_agent import HeuristicAgent
-from random_agent import RandomAgent
-from utils import make_episodes, ReplayBuffer
+from utils import make_episodes, create_agent, ReplayBuffer
 
 import os
 from datetime import datetime
@@ -20,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("--height", type=int, default=10, help="Height of the Minesweeper grid")
     parser.add_argument("--width", type=int, default=10, help="Width of the Minesweeper grid")
     parser.add_argument("--n_mines", type=int, default=20, help="Number of mines in the grid")
-    parser.add_argument("--agent", type=str, choices=["heuristic", "random"], default="heuristic", help="Type of agent to use")
+    parser.add_argument("--agent", type=str, choices=["random", "heuristic", "q-learning", "dqn"], default="heuristic", help="Type of agent to use")
     parser.add_argument("--n_episodes", type=int, default=10, help="Number of episodes to run")
     parser.add_argument("--rendering", type=bool, default=False, help="Enable rendering")
     parser.add_argument("--replay_buffer_capacity", type=int, default=10000, help="Capacity of the replay buffer")
@@ -28,7 +26,7 @@ if __name__ == "__main__":
 
     rendering = args.rendering
     env = MinesweeperEnv(args.height, args.width, args.n_mines, rendering=rendering)
-    agent = HeuristicAgent() if args.agent == "heuristic" else RandomAgent()
+    agent = create_agent(args.agent)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     replay_buffer = ReplayBuffer(args.replay_buffer_capacity, device=device)
