@@ -19,16 +19,11 @@ class HeuristicAgent:
         for x in range(height):
             for y in range(width):
                 target = visible[x, y]
-                if target <= 0: # if target cell is hidden or equals 0 (no mine around), then next cell
-                    continue
-
-                neighbors = self.get_neighbors(x, y, height, width)
-
-                hidden = [i * width + j for i, j in neighbors if visible[i, j] == -1]
-
-                if target == len(hidden): # number of hidden cells = number of mines around target cell
-                    flagged.update(hidden)
-
+                if target > 0: # if target cell is hidden or equals 0 (no mine around), then next cell
+                    neighbors = self.get_neighbors(x, y, height, width)
+                    hidden = [i * width + j for i, j in neighbors if visible[i, j] == -1]
+                    if target == len(hidden): # number of hidden cells = number of mines around target cell
+                        flagged.update(hidden)
         return list(flagged)
 
 
@@ -38,25 +33,25 @@ class HeuristicAgent:
         mines = self.flag(visible)
         mines_coords = set(divmod(mine, width) for mine in mines)
 
-        for h in range(height):
-            for w in range(width):
-                if 0 < visible[h, w] <= 8:
-                    num_mines_around = visible[h, w]
-                    neighbors_coords = self.get_neighbors(h, w, height, width)
-                    
+        for x in range(height):
+            for y in range(width):
+                if 0 < visible[x, y] <= 8:
+                    num_mines_around = visible[x, y]
+                    neighbors_coords = self.get_neighbors(x, y, height, width)
+
                     hidden_neighbors = []
                     flagged_neighbors_around_cell = []
 
-                    for nh, nw in neighbors_coords:
-                        if visible[nh, nw] == -1:
-                            hidden_neighbors.append((nh, nw))
-                        if (nh, nw) in mines_coords:
-                            flagged_neighbors_around_cell.append((nh, nw))
+                    for nx, ny in neighbors_coords:
+                        if visible[nx, ny] == -1:
+                            hidden_neighbors.append((nx, ny))
+                        if (nx, ny) in mines_coords:
+                            flagged_neighbors_around_cell.append((nx, ny))
 
                     if len(flagged_neighbors_around_cell) == num_mines_around:
-                        for hnh, hnw in hidden_neighbors:
-                            if (hnh, hnw) not in flagged_neighbors_around_cell:
-                                safe_cells.add(hnh * width + hnw)   
+                        for hnx, hny in hidden_neighbors:
+                            if (hnx, hny) not in flagged_neighbors_around_cell:
+                                safe_cells.add(hnx * width + hny)   
 
         return list(safe_cells)
 
