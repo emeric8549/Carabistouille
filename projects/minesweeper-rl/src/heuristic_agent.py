@@ -56,17 +56,18 @@ class HeuristicAgent:
         return list(safe_cells)
 
 
-    def take_action(self, env):
-        certain_safe = self.get_certain_safe(env.visible)
+    def take_action(self, obs):
+        n_actions = obs.shape[0] * obs.shape[1]
+        certain_safe = self.get_certain_safe(obs)
         if certain_safe:
             return np.random.choice(certain_safe, size=1)
         
-        certain_mines = self.flag(env.visible)
+        certain_mines = self.flag(obs)
         if certain_mines:
-            actions = [i for i in range(env.n_actions) if (i not in certain_mines and env.visible[divmod(i, env.width)] == -1)]
+            actions = [i for i in range(n_actions) if (i not in certain_mines and obs[divmod(i, obs.shape[1])] == -1)]
             if actions:
                 return np.random.choice(actions, size=1)
             
         else:
-            hidden_cells = [i for i in range(env.n_actions) if env.visible[divmod(i, env.width)] == -1]
+            hidden_cells = [i for i in range(n_actions) if obs[divmod(i, obs.shape[1])] == -1]
             return np.random.choice(hidden_cells, size=1)

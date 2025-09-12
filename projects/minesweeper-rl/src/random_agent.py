@@ -5,5 +5,6 @@ class RandomAgent:
         pass
 
     
-    def take_action(self, env):
-        return np.random.randint(0, env.n_actions)
+    def take_action(self, obs):
+        n_actions = obs.shape[0] * obs.shape[1]
+        return np.random.randint(0, n_actions)
