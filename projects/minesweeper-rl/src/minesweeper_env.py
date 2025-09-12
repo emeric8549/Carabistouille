@@ -29,6 +29,13 @@ class MinesweeperEnv:
         self._calculate_numbers()
         self.history = [(self.visible.copy(), None)]
 
+        if self.rendering and hasattr(self, 'texts') and self.texts is not None:
+            for row in self.texts:
+                for text in row:
+                    if text:
+                        text.remove()
+            self.texts = [[None for _ in range(self.width)] for _ in range(self.height)]
+
         return self._get_observation()
     
     def step(self, action):
