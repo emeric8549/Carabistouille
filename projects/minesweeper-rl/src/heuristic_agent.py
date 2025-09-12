@@ -35,8 +35,8 @@ class HeuristicAgent:
 
         for x in range(height):
             for y in range(width):
-                if 0 < visible[x, y] <= 8:
-                    num_mines_around = visible[x, y]
+                num_mines_around = visible[x, y]
+                if 0 < num_mines_around <= 8:
                     neighbors_coords = self.get_neighbors(x, y, height, width)
 
                     hidden_neighbors = []
@@ -57,10 +57,16 @@ class HeuristicAgent:
 
 
     def take_action(self, env):
-        flagged = self.flag(env.visible)
-        actions = [i for i in range(env.n_actions) if (i not in flagged and env.visible[divmod(i, env.width)] < 0)]
-        if actions:
-            action = np.random.choice(actions, size=1)
+        certain_safe = self.get_certain_safe(env.visible)
+        if certain_safe:
+            return np.random.choice(certain_safe, size=1)
+        
+        certain_mines = self.flag(env.visible)
+        if certain_mines:
+            actions = [i for i in range(env.n_actions) if (i not in certain_mines and env.visible[divmod(i, env.width)] == -1)]
+            if actions:
+                return np.random.choice(actions, size=1)
+            
         else:
-            action = np.random.randint(0, env.n_actions)
-        return action
+            hidden_cells = [i for i in range(env.n_actions) if env.visible[divmod(i, env.width)] == -1]
+            return np.random.choice(hidden_cells, size=1)
