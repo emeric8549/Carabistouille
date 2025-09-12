@@ -13,7 +13,7 @@ class MinesweeperEnv:
         self.history = []
 
         self.reset()
-        if self.rendering == "human":
+        if self.rendering:
             self._setup_rendering()
 
     def reset(self):
@@ -111,7 +111,7 @@ class MinesweeperEnv:
         plt.pause(0.5)
 
     def render(self):
-        if self.rendering == "human":
+        if self.rendering:
             self.img.set_data(self.visible)
 
             # Supprimer anciens textes
