@@ -11,6 +11,7 @@ class MinesweeperEnv:
         self.render_delay = render_delay
         self.n_actions = height * width
         self.history = []
+        self._is_first_move = True
 
         self.reset()
         if self.rendering:
@@ -28,6 +29,7 @@ class MinesweeperEnv:
         self._place_mines()
         self._calculate_numbers()
         self.history = [(self.visible.copy(), None)]
+        self._is_first_move = True
 
         if self.rendering and hasattr(self, 'texts') and self.texts is not None:
             for row in self.texts:
@@ -44,7 +46,17 @@ class MinesweeperEnv:
         if self.visible[x, y] != -1:
             return self._get_observation(), -0.1, self.game_over, {"invalid": True}
         
-        elif self.grid[x, y] == -1:
+        if self._is_first_move:
+            if self.grid[x, y] == -1:
+                empty_cells = [(i, j) for i in range(self.height) for j in range(self.width) if self.grid[i, j] != -1]
+                if empty_cells:
+                    new_x, new_y = empty_cells[np.random.randint(len(empty_cells))]
+                    self.grid[x, y] = 0
+                    self.grid[new_x, new_y] = -1
+                    self._calculate_numbers()
+            self._is_first_move = False
+            
+        if self.grid[x, y] == -1:
             self.game_over = True
             self.visible[x, y] = -2
             self.history.append((self.visible.copy(), (x, y)))
@@ -70,6 +82,11 @@ class MinesweeperEnv:
             self.grid[x, y] = -1
 
     def _calculate_numbers(self):
+        for x in range(self.height):
+            for y in range(self.width):
+                if self.grid[x, y] != -1:
+                    self.grid[x, y] = 0
+
         for x in range(self.height):
             for y in range(self.width):
                 if self.grid[x, y] == -1:
