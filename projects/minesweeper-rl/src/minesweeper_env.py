@@ -21,7 +21,7 @@ class MinesweeperEnv:
         """
         Initialize the game
         self.grid is the solution of the current minesweeper. A -1 indicates a mine while number between 0 and 8 indicates the number of mines in the neighborhood
-        self.visible is the grid visible by the player/agent. A -1 indicates that it is still hidden while -2 indicates that a mine has been triggered
+        self.visible is the grid visible by the player/agent. A -1 indicates that it is still hidden while 9 indicates that a mine has been triggered
         """
         self.grid = np.zeros((self.height, self.width), dtype=int)
         self.visible = -np.ones((self.height, self.width), dtype=int)
@@ -47,7 +47,7 @@ class MinesweeperEnv:
             return self._get_observation(), -0.1, self.game_over, {"invalid": True}
         
         if self._is_first_move:
-            if self.grid[x, y] == -1:
+            if self.grid[x, y] == -1: # First move is a mine, relocate it
                 empty_cells = [(i, j) for i in range(self.height) for j in range(self.width) if self.grid[i, j] != -1]
                 if empty_cells:
                     new_x, new_y = empty_cells[np.random.randint(len(empty_cells))]
@@ -58,7 +58,7 @@ class MinesweeperEnv:
             
         if self.grid[x, y] == -1:
             self.game_over = True
-            self.visible[x, y] = -2
+            self.visible[x, y] = 9
             self.history.append((self.visible.copy(), (x, y)))
             return self._get_observation(), -10.0, True, {}
         
@@ -148,7 +148,7 @@ class MinesweeperEnv:
             for i in range(self.height):
                 for j in range(self.width):
                     val = self.visible[i, j]
-                    if val >= 0:  # 0 à 8
+                    if 0 <= val <= 8:  # 0 à 8
                         color = "black" if val != 0 else "gray"
                         self.texts[i][j] = self.ax.text(j, i, str(val),
                                                         ha="center", va="center",
@@ -159,6 +159,6 @@ class MinesweeperEnv:
             plt.pause(self.render_delay)
 
     def close(self):
-        if self.rendering == "human":
+        if self.rendering:
             plt.ioff()
             plt.close(self.fig)
