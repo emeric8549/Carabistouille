@@ -14,8 +14,11 @@ def build_vocab(pairs, skipgram=False):
             vocab.update(source)
             vocab.add(target)
 
-    for i, word in enumerate(vocab):
+    word2idx["pad_token"] = 0
+    idx2word[0] = "pad_token"
+
+    for i, word in enumerate(sorted(vocab), start=1):
         word2idx[word] = i
         idx2word[i] = word
 
-    return word2idx, idx2word, len(vocab)
+    return word2idx, idx2word, len(vocab) + 1
