@@ -11,13 +11,13 @@ Below are the projects I have done so far and those that I plan to do (this is a
 ## **Completed projects:**
 - mlp-numpy
 - resnet
+- small-RAG using langchain et chroma
 
 ## **Ongoing projects:**
 - auto-encoder
 - hackathon (plankton images classification)
 - create agent on a pre-trained LLM
 - reinforcement learning I: minesweeper-rl
-- small-RAG using langchain et chroma
 - use case on time series
 - unet
 - word2vec
