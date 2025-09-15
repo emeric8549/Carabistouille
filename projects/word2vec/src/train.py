@@ -1,6 +1,7 @@
 import numpy as np
 
 def train(model, encoded_pairs, epochs=10, lr=0.01, skipgram=False):
+    print("Starting training...")
     if skipgram:
         loss_fn = lambda y_true, y_pred: -np.sum(np.log(y_pred[y_true] + 1e-9)) / len(y_true)
     else:
