@@ -1,5 +1,4 @@
 import numpy as np
-from model_cbow import CBOWModel
 
 def train(model, encoded_pairs, epochs=10, lr=0.01, skipgram=False):
     if skipgram:
