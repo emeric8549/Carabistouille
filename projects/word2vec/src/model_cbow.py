@@ -2,8 +2,8 @@ import numpy as np
 
 class CBOWModel:
     def __init__(self, vocab_size, embedding_dim):
-        self.W1 = np.random.randn(vocab_size, embedding_dim) * 0.01
-        self.W2 = np.random.randn(embedding_dim, vocab_size) * 0.01
+        self.W1 = np.random.uniform(-0.5/embedding_dim, 0.5/embedding_dim, (vocab_size, embedding_dim))
+        self.W2 = np.zeros((embedding_dim, vocab_size))
 
     def softmax(self, x):
         exp_x = np.exp(x - np.max(x, axis=1, keepdims=True))
