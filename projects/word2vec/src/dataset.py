@@ -1,18 +1,36 @@
 from preprocessing import tokenize
+import nltk
+from nltk.corpus import brown, reuters, gutenberg
+
+
+def get_data(corpus_name):
+    if corpus_name == "brown":
+        nltk.download("brown")
+        sentences = brown.sents()
+    elif corpus_name == "reuters":
+        nltk.download("reuters")
+        sentences = reuters.sents()
+    elif corpus_name == "gutenberg":
+        nltk.download("gutenberg")
+        sentences = gutenberg.sents()
+    else:
+        raise ValueError(f"Unknown dataset: {corpus_name}")
+
+    return sentences
 
 
 def generate_pairs(corpus, window_size=2, skipgram=False):
     corpus_pairs = []
     for sentence in corpus:
-        tokenized = tokenize(sentence)
+        #tokenized = tokenize(sentence)
 
         pairs = []
-        for i in range(len(tokenized)):
+        for i in range(len(sentence)):
             start = max(0, i - window_size)
-            end = min(len(tokenized), i + window_size + 1)
+            end = min(len(sentence), i + window_size + 1)
 
-            context = [tokenized[j] for j in range(start, end) if j != i]
-            target = tokenized[i]
+            context = [sentence[j] for j in range(start, end) if j != i]
+            target = sentence[i]
 
             if skipgram:
                 pairs.append([target, context])

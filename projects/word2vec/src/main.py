@@ -1,28 +1,26 @@
 import argparse
-from dataset import *
+from dataset import get_data, generate_pairs, encode_pairs
 from preprocessing import build_vocab
 from model_cbow import CBOWModel
 from model_skipgram import SkipGramModel
 from train import train
 from utils import visualize_embeddings
-from data_utils import load_wiki_texts
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Train a Word2Vec model (CBOW or Skipgram) on a wikipedia dataset")
+    parser.add_argument("--corpus", type=str, default="brown", choices=["brown", "reuters", "gutenberg"], help="Corpus used to train the model")
     parser.add_argument("--skipgram", type=bool, default=True, help="Use the Skipgram model (CBOW otherwise)")
     parser.add_argument("--window_size", type=int, default=2, help="Size of the window for context")
     parser.add_argument("--emb_size", type=int, default=50, help="Size of the embeddings")
-    parser.add_argument("--epochs", type=int, default=100, hel="Number of epochs for training")
+    parser.add_argument("--epochs", type=int, default=100, help="Number of epochs for training")
     parser.add_argument("--lr", type=float, default=1e-2, help="Learning rate for training")
 
     args = parser.parse_args()
 
     skipgram = args.skipgram
 
-    sentences = list(load_wiki_texts('data/frwiki-latest-pages-articles.xml.bz2', limit=10))
-    pairs = generate_pairs(" ".join(sum(sentences, [])), window_size=args.window_size, skipgram=skipgram)
-    #pairs = generate_pairs(corpus, window_size=2, skipgram=skipgram)
+    sentences = get_data(args.corpus)
+    pairs = generate_pairs(sentences, window_size=args.window_size, skipgram=skipgram)
 
     word2idx, idx2word, vocab_size = build_vocab(pairs, skipgram)
     encoded_pairs = encode_pairs(pairs, word2idx, skipgram)
