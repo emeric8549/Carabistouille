@@ -1,4 +1,5 @@
 import argparse
+import numpy as np
 from dataset import get_data, generate_pairs, encode_pairs, Dataset, Dataloader
 from preprocessing import build_vocab
 from model_cbow import CBOWModel
@@ -13,7 +14,8 @@ if __name__ == "__main__":
     parser.add_argument("--window_size", type=int, default=2, help="Size of the window for context")
     parser.add_argument("--emb_size", type=int, default=20, help="Size of the embeddings")
     parser.add_argument("--epochs", type=int, default=3, help="Number of epochs for training")
-    parser.add_argument("--lr", type=float, default=1e-2, help="Learning rate for training")
+    parser.add_argument("--lr", type=float, default=1e-1, help="Learning rate for training")
+    parser.add_argument("--train", action="store_true", help="Whether to train the model or not")
 
     args = parser.parse_args()
 
@@ -27,7 +29,12 @@ if __name__ == "__main__":
     dataloader = Dataloader(dataset, batch_size=32, shuffle=True, skipgram=skipgram)
 
     model = SkipGramModel(vocab_size, embedding_dim=args.emb_size) if skipgram else CBOWModel(vocab_size, embedding_dim=args.emb_size)
-    train(model, dataloader, epochs=args.epochs, lr=args.lr, skipgram=skipgram)
+    filename = f"model_weights/embeddings_{args.model}_{args.corpus}.npz"
+    if args.train:
+        train(model, dataloader, epochs=args.epochs, lr=args.lr, skipgram=skipgram, filename=filename)
 
-    filename = "embeddings_skipgram.png" if skipgram else "embeddings_cbow.png"
-    visualize_embeddings(model.W1, idx2word, filename=filename)
+    model.W1 = np.load(filename)["W1"]
+    model.W2 = np.load(filename)["W2"]
+
+    filename_plot = "plots/embeddings_skipgram.png" if skipgram else "plots/embeddings_cbow.png"
+    visualize_embeddings(model.W1, idx2word, filename=filename_plot)

@@ -3,7 +3,7 @@ from tqdm import tqdm
 import os
 
 
-def train(model, dataset, epochs=10, lr=0.01, skipgram=False):
+def train(model, dataset, epochs=10, lr=0.01, skipgram=False, filename="model_weights/embeddings.npz"):
     os.makedirs("model_weights", exist_ok=True)
     print("Starting training...")
     for epoch in range(epochs):
@@ -28,9 +28,9 @@ def train(model, dataset, epochs=10, lr=0.01, skipgram=False):
 
         avg_loss = total_loss / n_batches
         print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
+        
         W1 = model.W1
         W2 = model.W2
-        model_name = "skipgram" if skipgram else "cbow"
-        filename = f"model_weights/embeddings_{model_name}.npz"
         np.savez(filename, W1=W1, W2=W2)
+        
     print("Training completed.")
