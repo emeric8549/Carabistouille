@@ -1,19 +1,27 @@
 import numpy as np
+from tqdm import tqdm
 
-def train(model, encoded_pairs, epochs=10, lr=0.01, skipgram=False):
+def train(model, dataset, epochs=10, lr=0.01, skipgram=False):
     print("Starting training...")
-    if skipgram:
-        loss_fn = lambda y_true, y_pred: -np.sum(np.log(y_pred[y_true] + 1e-9)) / len(y_true)
-    else:
-        loss_fn = lambda y_true, y_pred: -np.log(y_pred[y_true] + 1e-9)
     for epoch in range(epochs):
         total_loss = 0
-        for source, y_true in encoded_pairs:
-            y_pred, hidden = model.forward(source)
-            loss = loss_fn(y_true, y_pred)
+        n_batches = 0
+        for X_batch, y_batch in tqdm(dataset, desc=f"Epoch {epoch+1}/{epochs}"):
+            y_pred, hidden = model.forward(X_batch)
+            if skipgram:
+                batch_loss = 0
+                for i, context in enumerate(y_batch):
+                    for w in context:
+                        if w != 0:  # Ignore padding
+                            batch_loss += -np.log(y_pred[i][w] + 1e-9)
+                loss = batch_loss / len(X_batch)
+            else:
+                loss = -np.mean([np.log(y_pred[np.arange(len(y_batch)), y_batch] + 1e-9)])
+
             total_loss += loss
+            n_batches += 1
 
-            model.backward(source, y_true, y_pred, hidden, lr=lr)
+            model.backward(X_batch, y_batch, y_pred, hidden, lr=lr)
 
-        avg_loss = total_loss / len(encoded_pairs)
+        avg_loss = total_loss / n_batches
         print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
