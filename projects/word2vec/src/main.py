@@ -1,7 +1,6 @@
 import argparse
 import numpy as np
-from dataset import get_data, generate_pairs, encode_pairs, Dataset, Dataloader
-from preprocessing import build_vocab
+from dataset import get_data, generate_pairs, build_vocab, encode_pairs, Dataset, Dataloader
 from model_cbow import CBOWModel
 from model_skipgram import SkipGramModel
 from train import train
