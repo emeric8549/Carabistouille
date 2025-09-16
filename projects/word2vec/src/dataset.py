@@ -1,4 +1,3 @@
-from preprocessing import tokenize
 import nltk
 from nltk.corpus import brown, reuters, gutenberg
 import numpy as np
