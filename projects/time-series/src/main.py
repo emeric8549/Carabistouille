@@ -1,7 +1,7 @@
 import argparse
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from utils import load_data, get_model
+from utils import load_data, get_model, visualize_filters
 from train import train
 
 if __name__ == "__main__":
@@ -24,7 +24,12 @@ if __name__ == "__main__":
     input_size = X_train.shape[2]
     num_classes = y_train.shape[1]
     model = get_model(args.model, input_size, args.hidden_size, num_classes)
+    filename = f"model_{args.model}_{args.hidden_size}.pth"
 
     trained_model = train(model, train_loader, test_loader, args.device, epochs=args.epochs, lr=args.lr)
-    torch.save(trained_model.state_dict(), f"model_{args.model}.pth")
-    print(f"Model saved as model_{args.model}.pth")
+    torch.save(trained_model.state_dict(), filename)
+    print(f"Model saved as {filename}")
+
+    model.load_state_dict(torch.load(filename, weights_only=True))
+    conv1 = model.conv1.weight.data.cpu().numpy()
+    visualize_filters(conv1)

@@ -41,3 +41,17 @@ def get_model(model_name, input_size, hidden_size, num_classes):
         return CNN1DModel(hidden_size=hidden_size, num_classes=num_classes)
     else:
         raise ValueError(f"Unknown model: {model_name}")
+
+
+def visualize_filters(conv):
+    n_filters = conv.shape[0]
+    fig, axes = plt.subplots(n_filters // 4, 4, figsize=(12, 8))
+    axes = axes.flatten()
+
+    for i in range(n_filters):
+        axes[i].plot(conv[i, 0, :])
+        axes[i].set_title(f"Filter {i+1}")
+        axes[i].axis("off")
+
+    plt.tight_layout()
+    plt.savefig("CNN1D_filters.png")
