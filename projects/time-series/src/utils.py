@@ -30,14 +30,14 @@ def load_data(train_path, test_path):
     return X_train_t, y_train_t, X_test_t, y_test_t
 
 
-def get_model(model_name, input_size, num_classes):
+def get_model(model_name, input_size, hidden_size, num_classes):
     if model_name == "rnn":
-        return RNNModel(input_size=input_size, num_classes=num_classes)
+        return RNNModel(input_size=input_size, hidden_size=hidden_size, num_classes=num_classes)
     elif model_name == "gru":
-        return GRUModel(input_size=input_size, num_classes=num_classes)
+        return GRUModel(input_size=input_size, hidden_size=hidden_size, num_classes=num_classes)
     elif model_name == "lstm":
-        return LSTMModel(input_size=input_size, num_classes=num_classes)
+        return LSTMModel(input_size=input_size, hidden_size=hidden_size, num_classes=num_classes)
     elif model_name == "cnn1d":
-        return CNN1DModel(num_classes=num_classes)
+        return CNN1DModel(hidden_size=hidden_size, num_classes=num_classes)
     else:
         raise ValueError(f"Unknown model: {model_name}")

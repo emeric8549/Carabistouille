@@ -9,6 +9,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=str, default="rnn", choices=["rnn", "gru", "lstm", "cnn1d"], help="rnn | gru | lstm | cnn1d")
     parser.add_argument("--train_path", type=str, default="data/mitbih_train.csv")
     parser.add_argument("--test_path", type=str, default="data/mitbih_test.csv")
+    parser.add_argument("--hidden_size", type=int, default=64, help="Size of hidden dimension")
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--lr", type=float, default=1e-3)
@@ -22,7 +23,7 @@ if __name__ == "__main__":
 
     input_size = X_train.shape[2]
     num_classes = y_train.shape[1]
-    model = get_model(args.model, input_size, num_classes)
+    model = get_model(args.model, input_size, args.hidden_size, num_classes)
 
     trained_model = train(model, train_loader, test_loader, args.device, epochs=args.epochs, lr=args.lr)
     torch.save(trained_model.state_dict(), f"model_{args.model}.pth")
