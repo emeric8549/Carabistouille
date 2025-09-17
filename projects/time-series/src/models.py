@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 
 class RNNModel(nn.Module):
@@ -41,18 +40,18 @@ class LSTMModel(nn.Module):
 
 
 class CNN1DModel(nn.Module):
-    def __init__(self, input_channels=1, num_classes=5):
+    def __init__(self, input_channels=1, hidden_size=16, num_classes=5):
         super(CNN1DModel, self).__init__()
-        self.conv1 = nn.Conv1d(input_channels, 16, kernel_size=5, padding=2)
-        self.bn1 = nn.BatchNorm1d(16)
+        self.conv1 = nn.Conv1d(input_channels, hidden_size, kernel_size=20, padding=2)
+        self.bn1 = nn.BatchNorm1d(hidden_size)
         self.relu = nn.ReLU()
         self.pool = nn.MaxPool1d(2)
 
-        self.conv2 = nn.Conv1d(16, 32, kernel_size=5, padding=2)
-        self.bn2 = nn.BatchNorm1d(32)
+        self.conv2 = nn.Conv1d(hidden_size, hidden_size * 2, kernel_size=5, padding=2)
+        self.bn2 = nn.BatchNorm1d(hidden_size * 2)
 
         self.global_pool = nn.AdaptiveAvgPool1d(1)
-        self.fc = nn.Linear(32, num_classes)
+        self.fc = nn.Linear(hidden_size * 2, num_classes)
 
     def forward(self, x):
         x = x.permute(0, 2, 1)
