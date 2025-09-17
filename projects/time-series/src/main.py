@@ -7,6 +7,7 @@ from train import train
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="rnn", choices=["rnn", "gru", "lstm", "cnn1d"], help="rnn | gru | lstm | cnn1d")
+    parser.add_argument("--train", action="store_true", help="Whether to train the model or not")
     parser.add_argument("--train_path", type=str, default="data/mitbih_train.csv")
     parser.add_argument("--test_path", type=str, default="data/mitbih_test.csv")
     parser.add_argument("--hidden_size", type=int, default=64, help="Size of hidden dimension")
@@ -26,10 +27,12 @@ if __name__ == "__main__":
     model = get_model(args.model, input_size, args.hidden_size, num_classes)
     filename = f"model_{args.model}_{args.hidden_size}.pth"
 
-    trained_model = train(model, train_loader, test_loader, args.device, epochs=args.epochs, lr=args.lr)
-    torch.save(trained_model.state_dict(), filename)
-    print(f"Model saved as {filename}")
+    if args.train:
+        trained_model = train(model, train_loader, test_loader, args.device, epochs=args.epochs, lr=args.lr)
+        torch.save(trained_model.state_dict(), filename)
+        print(f"Model saved as {filename}")
 
-    model.load_state_dict(torch.load(filename, weights_only=True))
-    conv1 = model.conv1.weight.data.cpu().numpy()
-    visualize_filters(conv1)
+    if args.model == "cnn1d":
+        model.load_state_dict(torch.load(filename, weights_only=True))
+        conv1 = model.conv1.weight.data.cpu().numpy()
+        visualize_filters(conv1)
